@@ -31,12 +31,20 @@ function App() {
   return (
     <div>
       <h1>My Road to React</h1>
-      <label htmlFor='search'>Search: </label>
-      <input id='search' type='text'/>
+      
+      <Search/>
 
       <hr/>
+      
+      <List/>
+      
+    </div>
+  );
+}
 
-      <ul>
+function List() {
+  return (
+    <ul>
         {list.map(item => {
           return (
             <li key={item.id}>
@@ -49,8 +57,16 @@ function App() {
           );
         })}
       </ul>
+  )
+}
+
+function Search() {
+  return (
+    <div>
+      <label htmlFor='search'>Search: </label>
+      <input id='search' type='text'/>
     </div>
-  );
+  )
 }
 
 export default App
