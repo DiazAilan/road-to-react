@@ -1,5 +1,14 @@
 import './App.scss'
 
+interface ListItem {
+  id: number;
+  title: string;
+  url: string;
+  author: string;
+  numComments: number;
+  points: number;
+}
+
 const list = [
   {
     id: 0,
@@ -47,18 +56,25 @@ function List() {
     <ul>
         {list.map(item => {
           return (
-            <li key={item.id}>
-              <span>
-                <a href={item.url}>{item.title} - {item.author}</a>
-              </span>
-              <span> | {item.numComments} comments</span>
-              <span> | {item.points} points</span>
-            </li>
+            <ListItem item={item} key={item.id}/>
           );
         })}
       </ul>
   )
 }
+
+function ListItem({item}: {item: ListItem}) {
+  return (
+    <li>
+      <span>
+        <a href={item.url}>{item.title} - {item.author}</a>
+      </span>
+      <span> | {item.numComments} comments</span>
+      <span> | {item.points} points</span>
+    </li>
+  )
+}
+
 
 function Search() {
   return (
