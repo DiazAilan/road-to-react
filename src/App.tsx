@@ -36,6 +36,25 @@ const list = [
   },
 ]
 
+const anotherList = [
+  {
+    id: 0,
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    numComments: 3,
+    points: 4,
+  },
+  {
+    id: 1,
+    title: 'RxJS',
+    url: 'https://rxjs.dev/',
+    author: 'Unknown',
+    numComments: 4,
+    points: 3,
+  },
+]
+
 function App() {
   return (
     <div>
@@ -45,13 +64,17 @@ function App() {
 
       <hr/>
       
-      <List/>
+      <List list={list}/>
+
+      <hr/>
+
+      <List list={anotherList}/>
       
     </div>
   );
 }
 
-function List() {
+function List({list}: {list: ListItem[]}) {
   return (
     <ul>
         {list.map(item => {
