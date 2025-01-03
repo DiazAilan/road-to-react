@@ -55,57 +55,47 @@ const anotherList = [
   },
 ]
 
-function App() {
-  return (
-    <div>
-      <h1>My Road to React</h1>
-      
-      <Search/>
+const App = () => (
+  <div>
+    <h1>My Road to React</h1>
+    
+    <Search/>
 
-      <hr/>
-      
-      <List list={list}/>
+    <hr/>
+    
+    <List list={list}/>
 
-      <hr/>
+    <hr/>
 
-      <List list={anotherList}/>
-      
-    </div>
-  );
-}
+    <List list={anotherList}/>
+    
+  </div>
+);
 
-function List({list}: {list: ListItem[]}) {
-  return (
-    <ul>
-        {list.map(item => {
-          return (
-            <ListItem item={item} key={item.id}/>
-          );
-        })}
-      </ul>
-  )
-}
+const List = ({list}: {list: ListItem[]}) => (
+  <ul>
+      {list.map(item => (
+        <ListItem item={item} key={item.id}/>
+      ))}
+    </ul>
+)
 
-function ListItem({item}: {item: ListItem}) {
-  return (
-    <li>
-      <span>
-        <a href={item.url}>{item.title} - {item.author}</a>
-      </span>
-      <span> | {item.numComments} comments</span>
-      <span> | {item.points} points</span>
-    </li>
-  )
-}
+const ListItem = ({item}: {item: ListItem}) => (
+  <li>
+    <span>
+      <a href={item.url}>{item.title} - {item.author}</a>
+    </span>
+    <span> | {item.numComments} comments</span>
+    <span> | {item.points} points</span>
+  </li>
+)
 
 
-function Search() {
-  return (
-    <div>
-      <label htmlFor='search'>Search: </label>
-      <input id='search' type='text'/>
-    </div>
-  )
-}
+const Search = () => (
+  <div>
+    <label htmlFor='search'>Search: </label>
+    <input id='search' type='text'/>
+  </div>
+)
 
 export default App
