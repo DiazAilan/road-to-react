@@ -90,12 +90,22 @@ const ListItem = ({item}: {item: ListItem}) => (
   </li>
 )
 
+const Search = () => {
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    console.log(event);
+    console.log(event.target.value)
+  }
 
-const Search = () => (
-  <div>
-    <label htmlFor='search'>Search: </label>
-    <input id='search' type='text'/>
-  </div>
-)
+  function handleBlur(event: React.ChangeEvent<HTMLInputElement>) {
+    console.log(event)
+  }
+
+  return (
+    <div>
+      <label htmlFor='search'>Search: </label>
+      <input id='search' type='text' onChange={handleChange} onBlur={handleBlur}/>
+    </div>
+  )
+}
 
 export default App
