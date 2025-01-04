@@ -1,6 +1,10 @@
 import './App.scss'
 
-interface ListItem {
+type ListProps = {
+  list: Story[]
+}
+
+interface Story {
   id: number;
   title: string;
   url: string;
@@ -9,70 +13,50 @@ interface ListItem {
   points: number;
 }
 
-const list = [
-  {
-    id: 0,
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    numComments: 3,
-    points: 4,
-  },
-  {
-    id: 1,
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    numComments: 2,
-    points: 5,
-  },
-  {
-    id: 2,
-    title: 'RxJS',
-    url: 'https://rxjs.dev/',
-    author: 'Unknown',
-    numComments: 4,
-    points: 3,
-  },
-]
+const App = () => {
 
-const anotherList = [
-  {
-    id: 0,
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    numComments: 3,
-    points: 4,
-  },
-  {
-    id: 1,
-    title: 'RxJS',
-    url: 'https://rxjs.dev/',
-    author: 'Unknown',
-    numComments: 4,
-    points: 3,
-  },
-]
+  const stories = [
+    {
+      id: 0,
+      title: 'React',
+      url: 'https://reactjs.org/',
+      author: 'Jordan Walke',
+      numComments: 3,
+      points: 4,
+    },
+    {
+      id: 1,
+      title: 'Redux',
+      url: 'https://redux.js.org/',
+      author: 'Dan Abramov, Andrew Clark',
+      numComments: 2,
+      points: 5,
+    },
+    {
+      id: 2,
+      title: 'RxJS',
+      url: 'https://rxjs.dev/',
+      author: 'Unknown',
+      numComments: 4,
+      points: 3,
+    },
+  ]
 
-const App = () => (
-  <div>
-    <h1>My Road to React</h1>
-    
-    <Search/>
+  return (
+    <div>
+      <h1>My Road to React</h1>
+      
+      <Search/>
 
-    <hr/>
-    
-    <List list={list}/>
+      <hr/>
+      
+      <List list={stories}/>
+      
+    </div>
+    )
+  }
 
-    <hr/>
-
-    <List list={anotherList}/>
-    
-  </div>
-);
-
-const List = ({list}: {list: ListItem[]}) => (
+const List = ({list}: ListProps) => (
   <ul>
       {list.map(item => (
         <ListItem item={item} key={item.id}/>
@@ -80,7 +64,7 @@ const List = ({list}: {list: ListItem[]}) => (
     </ul>
 )
 
-const ListItem = ({item}: {item: ListItem}) => (
+const ListItem = ({item}: {item: Story}) => (
   <li>
     <span>
       <a href={item.url}>{item.title} - {item.author}</a>
