@@ -5,6 +5,10 @@ type ListProps = {
   list: Story[]
 }
 
+type SearchProps = {
+  onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void 
+}
+
 interface Story {
   id: number;
   title: string;
@@ -43,11 +47,15 @@ const App = () => {
     },
   ]
 
+  function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
+    console.log(event.target.value)
+  }
+
   return (
     <div>
       <h1>My Road to React</h1>
       
-      <Search/>
+      <Search onSearch={handleSearch}/>
 
       <hr/>
       
@@ -75,11 +83,13 @@ const ListItem = ({item}: {item: Story}) => (
   </li>
 )
 
-const Search = () => {
+const Search = ({onSearch}: SearchProps) => {
   const [searchTerm, setSearchTerm] = React.useState('')
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setSearchTerm(event.target.value)
+
+    onSearch(event)
   }
 
   function handleBlur(event: React.ChangeEvent<HTMLInputElement>) {
