@@ -1,3 +1,4 @@
+import React from 'react';
 import './App.scss'
 
 type ListProps = {
@@ -75,9 +76,10 @@ const ListItem = ({item}: {item: Story}) => (
 )
 
 const Search = () => {
+  const [searchTerm, setSearchTerm] = React.useState('')
+
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    console.log(event);
-    console.log(event.target.value)
+    setSearchTerm(event.target.value)
   }
 
   function handleBlur(event: React.ChangeEvent<HTMLInputElement>) {
@@ -88,6 +90,8 @@ const Search = () => {
     <div>
       <label htmlFor='search'>Search: </label>
       <input id='search' type='text' onChange={handleChange} onBlur={handleBlur}/>
+
+      <p>Searching for <strong>{searchTerm}</strong></p>
     </div>
   )
 }
