@@ -6,6 +6,7 @@ type ListProps = {
 }
 
 type SearchProps = {
+  search: string
   onSearch: (query: string) => void 
 }
 
@@ -20,7 +21,7 @@ interface Story {
 
 const App = () => {
 
-  const [searchTerm, setSearchTerm] = React.useState('')
+  const [searchTerm, setSearchTerm] = React.useState('React')
 
   const stories = [
     {
@@ -61,7 +62,7 @@ const App = () => {
     <div>
       <h1>My Road to React</h1>
       
-      <Search onSearch={handleSearch}/>
+      <Search search={searchTerm} onSearch={handleSearch}/>
 
       <hr/>
       
@@ -89,7 +90,7 @@ const ListItem = ({item}: {item: Story}) => (
   </li>
 )
 
-const Search = ({onSearch}: SearchProps) => {
+const Search = ({search, onSearch}: SearchProps) => {
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     onSearch(event.target.value)
@@ -102,7 +103,7 @@ const Search = ({onSearch}: SearchProps) => {
   return (
     <div>
       <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' onChange={handleChange} onBlur={handleBlur}/>
+      <input id='search' type='text' onChange={handleChange} onBlur={handleBlur} value={search}/>
     </div>
   )
 }
