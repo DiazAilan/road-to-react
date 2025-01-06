@@ -6,7 +6,7 @@ type ListProps = {
 }
 
 type SearchProps = {
-  onSearch: (event: React.ChangeEvent<HTMLInputElement>) => void 
+  onSearch: (query: string) => void 
 }
 
 interface Story {
@@ -19,6 +19,8 @@ interface Story {
 }
 
 const App = () => {
+
+  const [searchTerm, setSearchTerm] = React.useState('')
 
   const stories = [
     {
@@ -47,8 +49,9 @@ const App = () => {
     },
   ]
 
-  function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
-    console.log(event.target.value)
+  function handleSearch(query: string) {
+    setSearchTerm(query)
+    console.log(query)
   }
 
   return (
@@ -59,7 +62,7 @@ const App = () => {
 
       <hr/>
       
-      <List list={stories}/>
+      <List list={stories.filter(item => item.title.toLowerCase().includes(searchTerm.toLowerCase()))}/>
       
     </div>
     )
@@ -84,12 +87,9 @@ const ListItem = ({item}: {item: Story}) => (
 )
 
 const Search = ({onSearch}: SearchProps) => {
-  const [searchTerm, setSearchTerm] = React.useState('')
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setSearchTerm(event.target.value)
-
-    onSearch(event)
+    onSearch(event.target.value)
   }
 
   function handleBlur(event: React.ChangeEvent<HTMLInputElement>) {
@@ -100,8 +100,6 @@ const Search = ({onSearch}: SearchProps) => {
     <div>
       <label htmlFor='search'>Search: </label>
       <input id='search' type='text' onChange={handleChange} onBlur={handleBlur}/>
-
-      <p>Searching for <strong>{searchTerm}</strong></p>
     </div>
   )
 }
