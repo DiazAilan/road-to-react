@@ -74,19 +74,19 @@ const App = () => {
 
 const List = ({list}: ListProps) => (
   <ul>
-      {list.map(({id, ...item}) => (
-        <ListItem key={id} {...item}/>
+      {list.map(item => (
+        <ListItem item={item} key={item.id}/>
       ))}
     </ul>
 )
 
-const ListItem = ({title, url, author, numComments, points}: Omit<Story, 'id'>) => (
+const ListItem = ({item}: {item: Story}) => (
   <li>
     <span>
-      <a href={url}>{title} - {author}</a>
+      <a href={item.url}>{item.title} - {item.author}</a>
     </span>
-    <span> | {numComments} comments</span>
-    <span> | {points} points</span>
+    <span> | {item.numComments} comments</span>
+    <span> | {item.points} points</span>
   </li>
 )
 
