@@ -28,10 +28,12 @@ const App = () => {
     localStorage.getItem('search') || 'React'
   )
 
+  React.useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm])
+
   function handleSearch(query: string): void {
     setSearchTerm(query)
-
-    localStorage.setItem('search', query);
   }
 
   const searchedStories = stories.filter(story => 
