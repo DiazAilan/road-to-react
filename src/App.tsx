@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.scss'
+import storiesMockup from './mockups/stories.json'
 
 type ListProps = {
   list: Story[]
@@ -21,37 +22,16 @@ interface Story {
 
 const App = () => {
 
-  const [searchTerm, setSearchTerm] = React.useState('React')
+  const stories = storiesMockup
 
-  const stories = [
-    {
-      id: 0,
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      numComments: 3,
-      points: 4,
-    },
-    {
-      id: 1,
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      numComments: 2,
-      points: 5,
-    },
-    {
-      id: 2,
-      title: 'RxJS',
-      url: 'https://rxjs.dev/',
-      author: 'Unknown',
-      numComments: 4,
-      points: 3,
-    },
-  ]
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem('search') || 'React'
+  )
 
-  function handleSearch(query: string) {
+  function handleSearch(query: string): void {
     setSearchTerm(query)
+
+    localStorage.setItem('search', query);
   }
 
   const searchedStories = stories.filter(story => 
