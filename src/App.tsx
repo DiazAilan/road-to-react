@@ -25,7 +25,7 @@ const App = () => {
   const stories = storiesMockup
 
   const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem('search') || 'React'
+    localStorage.getItem('search') ?? 'React'
   )
 
   React.useEffect(() => {
