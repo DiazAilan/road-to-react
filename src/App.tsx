@@ -20,17 +20,23 @@ interface Story {
   points: number;
 }
 
+function useStorageState(key:string, initialState: string): [string, Function] {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) ?? initialState
+  ) 
+    
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key])
+
+  return [value, setValue]
+}
+
 const App = () => {
 
   const stories = storiesMockup
 
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem('search') ?? 'React'
-  )
-
-  React.useEffect(() => {
-    localStorage.setItem('search', searchTerm);
-  }, [searchTerm])
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
 
   function handleSearch(query: string): void {
     setSearchTerm(query)
