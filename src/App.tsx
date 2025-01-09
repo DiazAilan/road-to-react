@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './App.scss'
 import storiesMockup from './mockups/stories.json'
 
@@ -40,9 +40,14 @@ const App = () => {
   const stories = storiesMockup
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
+  const [isButtonActive, setIsButtonActive] = React.useState(false)
 
   function handleSearch(query: string): void {
-    setSearchTerm(query)
+    setSearchTerm(query);
+  }
+
+  function handleButtonClick(): void {
+    setIsButtonActive(!isButtonActive);
   }
 
   const searchedStories = stories.filter(story => 
@@ -61,7 +66,10 @@ const App = () => {
       <hr/>
       
       <List list={searchedStories}/>
-      
+
+      <Button onClick={handleButtonClick}>
+        {isButtonActive ? 'Try again!' : 'Toggle me!'}
+      </Button>
     </>
     )
   }
@@ -96,6 +104,20 @@ const InputWithLabel = ({id, label, value, type = 'text', onInputChange}: InputW
        onChange={event => onInputChange(event.target.value)}
       />
     </>
+  )
+}
+
+interface ButtonProps {
+  type?: 'button' | 'reset' | 'submit'
+  onClick: () => void
+  children: ReactNode
+}
+
+const Button = ({type = 'button', onClick, children, ...rest}: ButtonProps) => {
+  return (
+    <button type={type} onClick={onClick} {...rest}>
+      {children}
+    </button>
   )
 }
 
