@@ -47,7 +47,7 @@ const App = () => {
   );
 
   return (
-    <div>
+    <>
       <h1>My Road to React</h1>
       
       <Search search={searchTerm} onSearch={handleSearch}/>
@@ -56,16 +56,16 @@ const App = () => {
       
       <List list={searchedStories}/>
       
-    </div>
+    </>
     )
   }
 
 const List = ({list}: ListProps) => (
   <ul>
-      {list.map(item => (
-        <ListItem item={item} key={item.id}/>
-      ))}
-    </ul>
+    {list.map(item => (
+      <ListItem item={item} key={item.id}/>
+    ))}
+  </ul>
 )
 
 const ListItem = ({item}: {item: Story}) => (
@@ -89,10 +89,16 @@ const Search = ({search, onSearch}: SearchProps) => {
   }
 
   return (
-    <div>
+    <>
       <label htmlFor='search'>Search: </label>
-      <input id='search' type='text' onChange={handleChange} onBlur={handleBlur} value={search}/>
-    </div>
+      <input
+       id='search'
+       type='text'
+       onChange={handleChange}
+       onBlur={handleBlur}
+       value={search}
+      />
+    </>
   )
 }
 
