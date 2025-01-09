@@ -41,6 +41,7 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
   const [isButtonActive, setIsButtonActive] = React.useState(false)
+  const [favoriteMascot, setFavoriteMascot] = React.useState('')
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
@@ -48,6 +49,10 @@ const App = () => {
 
   function handleButtonClick(): void {
     setIsButtonActive(!isButtonActive);
+  }
+
+  function handleMascotChange(mascotType: 'cat' | 'dog' | 'tortoise') {
+    setFavoriteMascot(mascotType)
   }
 
   const searchedStories = stories.filter(story => 
@@ -70,6 +75,20 @@ const App = () => {
       <Button onClick={handleButtonClick}>
         {isButtonActive ? 'Try again!' : 'Toggle me!'}
       </Button>
+
+      <RadioButton value={favoriteMascot === 'cat'} onToggle={() => handleMascotChange('cat')}>
+        Cat
+      </RadioButton>
+
+      <RadioButton value={favoriteMascot === 'dog'} onToggle={() => handleMascotChange('dog')}>
+        Dog
+      </RadioButton>
+
+      <RadioButton value={favoriteMascot === 'tortoise'} onToggle={() => handleMascotChange('tortoise')}>
+        Tortoise
+      </RadioButton>
+
+      {favoriteMascot ? <p>Favorite Mascot: {favoriteMascot}</p> : null}
     </>
     )
   }
@@ -118,6 +137,21 @@ const Button = ({type = 'button', onClick, children, ...rest}: ButtonProps) => {
     <button type={type} onClick={onClick} {...rest}>
       {children}
     </button>
+  )
+}
+
+interface RadioButtonProps {
+  value: boolean;
+  onToggle: () => void;
+  children: ReactNode
+} 
+
+const RadioButton = ({value, children, onToggle}: RadioButtonProps) => {
+  return (
+    <label>
+      <input type="radio" checked={value} onChange={onToggle}></input>
+      {children}
+    </label>
   )
 }
 
