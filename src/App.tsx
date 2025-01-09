@@ -6,9 +6,12 @@ type ListProps = {
   list: Story[]
 }
 
-type SearchProps = {
-  search: string
-  onSearch: (query: string) => void 
+type InputWithLabelProps = {
+  id: string
+  label: string
+  value: string
+  type?: string
+  onInputChange: (value: string) => void 
 }
 
 interface Story {
@@ -50,8 +53,11 @@ const App = () => {
     <>
       <h1>My Road to React</h1>
       
-      <Search search={searchTerm} onSearch={handleSearch}/>
-
+      <InputWithLabel
+        id='search'
+        label='Search'
+        value={searchTerm}
+        onInputChange={handleSearch}/>
       <hr/>
       
       <List list={searchedStories}/>
@@ -78,25 +84,16 @@ const ListItem = ({item}: {item: Story}) => (
   </li>
 )
 
-const Search = ({search, onSearch}: SearchProps) => {
-
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    onSearch(event.target.value)
-  }
-
-  function handleBlur(event: React.ChangeEvent<HTMLInputElement>) {
-    console.log(event)
-  }
+const InputWithLabel = ({id, label, value, type = 'text', onInputChange}: InputWithLabelProps) => {
 
   return (
     <>
-      <label htmlFor='search'>Search: </label>
+      <label htmlFor={id}>{label}: </label>
       <input
-       id='search'
-       type='text'
-       onChange={handleChange}
-       onBlur={handleBlur}
-       value={search}
+       id={id}
+       type={type}
+       value={value}
+       onChange={event => onInputChange(event.target.value)}
       />
     </>
   )
