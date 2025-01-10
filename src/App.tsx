@@ -42,6 +42,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
   const [isButtonActive, setIsButtonActive] = React.useState(false)
   const [favoriteMascot, setFavoriteMascot] = React.useState('')
+  const [isChecked, setIsChecked] = React.useState(false)
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
@@ -51,8 +52,12 @@ const App = () => {
     setIsButtonActive(!isButtonActive);
   }
 
-  function handleMascotChange(mascotType: 'cat' | 'dog' | 'tortoise') {
+  function handleMascotChange(mascotType: 'cat' | 'dog' | 'tortoise'): void {
     setFavoriteMascot(mascotType)
+  }
+
+  function handleCheckbox(): void {
+    setIsChecked(!isChecked)
   }
 
   const searchedStories = stories.filter(story => 
@@ -67,7 +72,9 @@ const App = () => {
         id='search'
         label='Search'
         value={searchTerm}
-        onInputChange={handleSearch}/>
+        onInputChange={handleSearch}
+      />
+
       <hr/>
       
       <List list={searchedStories}/>
@@ -75,6 +82,8 @@ const App = () => {
       <Button onClick={handleButtonClick}>
         {isButtonActive ? 'Try again!' : 'Toggle me!'}
       </Button>
+
+      <hr/>
 
       <RadioButton value={favoriteMascot === 'cat'} onToggle={() => handleMascotChange('cat')}>
         Cat
@@ -89,6 +98,13 @@ const App = () => {
       </RadioButton>
 
       {favoriteMascot ? <p>Favorite Mascot: {favoriteMascot}</p> : null}
+
+      <hr/>
+      
+      <Checkbox value={isChecked} onChange={handleCheckbox}>
+        I'm checked? {String(isChecked)}
+      </Checkbox>
+
     </>
     )
   }
@@ -150,6 +166,21 @@ const RadioButton = ({value, children, onToggle}: RadioButtonProps) => {
   return (
     <label>
       <input type="radio" checked={value} onChange={onToggle}></input>
+      {children}
+    </label>
+  )
+}
+
+interface CheckboxProps {
+  value: boolean;
+  onChange: () => void;
+  children: ReactNode
+} 
+
+const Checkbox = ({value, children, onChange}: CheckboxProps) => {
+  return (
+    <label>
+      <input type="checkbox" checked={value} onChange={onChange}></input>
       {children}
     </label>
   )
