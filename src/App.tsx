@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import './App.scss'
 import storiesMockup from './mockups/stories.json'
 
@@ -60,6 +60,18 @@ const App = () => {
     setIsChecked(!isChecked)
   }
 
+  function handleDropdownElementSelection(index: number): void {
+    console.log(`${index} selected`)
+  }
+
+  function handleDropdownFirstElement(): void {
+    console.log('First element selected')
+  }
+  
+  function handleDropdownSecondElement(): void {
+    console.log('Second element selected')
+  }
+
   const searchedStories = stories.filter(story => 
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -105,6 +117,16 @@ const App = () => {
         I'm checked? {String(isChecked)}
       </Checkbox>
 
+      <hr/>
+
+      <Dropdown
+        onClickItem={handleDropdownElementSelection}
+        triggerLabel='Dropdown'
+        menu={[
+          <button>Menu 1</button>,
+          <button>Menu 2</button>
+        ]}
+      />
     </>
     )
   }
@@ -185,5 +207,36 @@ const Checkbox = ({value, children, onChange}: CheckboxProps) => {
     </label>
   )
 }
+
+interface DropdownProps {
+  onClickItem: (index: number) => void;
+  triggerLabel: string;
+  menu: ReactElement[];
+}
+
+const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  function handleOpen(): void {
+    setIsOpen(!isOpen)
+  }
+
+  return (
+    <div className='dropdown'>
+      <button onClick={handleOpen}>{triggerLabel}</button>
+      {isOpen
+        ? <ul className="menu">
+            {menu.map((menuItem, index) => (
+              <li key={index} className="menu-item" onClick={() => onClickItem(index)}>
+                {React.cloneElement(menuItem, {
+                  onClick: () => setIsOpen(false)               
+                })}
+              </li>
+            ))}
+          </ul>
+        : null}
+    </div>
+  )
+} 
 
 export default App
