@@ -1,6 +1,10 @@
-import React, { ReactElement, ReactNode } from 'react';
-import './App.scss'
-import storiesMockup from './mockups/stories.json'
+import { cloneElement, ReactElement, ReactNode, useEffect, useState } from 'react';
+import './App.scss';
+import storiesMockup from './mockups/stories.json';
+import usersMockup from './mockups/users.json';
+import { Story } from './models/story';
+import { User } from './models/user';
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 
 type ListProps = {
   list: Story[]
@@ -14,21 +18,12 @@ type InputWithLabelProps = {
   onInputChange: (value: string) => void 
 }
 
-interface Story {
-  id: number;
-  title: string;
-  url: string;
-  author: string;
-  numComments: number;
-  points: number;
-}
-
 function useStorageState(key:string, initialState: string): [string, Function] {
-  const [value, setValue] = React.useState(
+  const [value, setValue] = useState(
     localStorage.getItem(key) ?? initialState
   ) 
     
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem(key, value);
   }, [value, key])
 
@@ -37,12 +32,13 @@ function useStorageState(key:string, initialState: string): [string, Function] {
 
 const App = () => {
 
-  const stories = storiesMockup
+  const stories: Story[] = storiesMockup
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
-  const [isButtonActive, setIsButtonActive] = React.useState(false)
-  const [favoriteMascot, setFavoriteMascot] = React.useState('')
-  const [isChecked, setIsChecked] = React.useState(false)
+  const [isButtonActive, setIsButtonActive] = useState(false)
+  const [favoriteMascot, setFavoriteMascot] = useState('')
+  const [isChecked, setIsChecked] = useState(false)
+  const [users, setUsers] = useState<User[]>(usersMockup)
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
@@ -64,12 +60,19 @@ const App = () => {
     console.log(`${index} selected`)
   }
 
-  function handleDropdownFirstElement(): void {
-    console.log('First element selected')
+  function handleDragUser(info: {destination: {index: number}, source: {index: number}}): void {
+    if (info.destination) {
+      setUsers(reorderList(users, info.source.index, info.destination.index))
+    }
   }
   
-  function handleDropdownSecondElement(): void {
-    console.log('Second element selected')
+  function reorderList(list: any[], startIndex: number, endIndex: number): any[] {
+    const output = Array.from(list);
+    const [removed] = output.splice(startIndex, 1);
+
+    output.splice(endIndex, 0, removed);
+
+    return output;
   }
 
   const searchedStories = stories.filter(story => 
@@ -127,6 +130,10 @@ const App = () => {
           <button>Menu 2</button>
         ]}
       />
+
+      <hr/>
+
+      <UserList users={users} onDragEnd={handleDragUser}/>
     </>
     )
   }
@@ -215,7 +222,7 @@ interface DropdownProps {
 }
 
 const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   function handleOpen(): void {
     setIsOpen(!isOpen)
@@ -228,7 +235,7 @@ const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
         ? <ul className="menu">
             {menu.map((menuItem, index) => (
               <li key={index} className="menu-item" onClick={() => onClickItem(index)}>
-                {React.cloneElement(menuItem, {
+                {cloneElement(menuItem, {
                   onClick: () => setIsOpen(false)               
                 })}
               </li>
@@ -237,6 +244,39 @@ const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
         : null}
     </div>
   )
-} 
+}
+
+interface UserListProps {
+  users: User[],
+  onDragEnd: () => void
+}
+
+const UserList = ({users = [], onDragEnd}: UserListProps) => (
+  <DragDropContext onDragEnd={onDragEnd}>
+    <Droppable droppableId='droppable'>
+      {(provided) => (
+        <div ref={provided.innerRef} {...provided.droppableProps}>
+          {users.map((user, index) => (
+            <Draggable key={user.id} index={index} draggableId={user.id}>
+              {provided => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  {user.firstName} {user.lastName}
+                </div> 
+              )}
+            </Draggable>
+          ))}
+        </div>
+      )}
+    </Droppable>
+  </DragDropContext>
+)
+
+const User = (user: User) => (
+  <div>{user.firstName} {user.lastName}</div>
+)
 
 export default App
