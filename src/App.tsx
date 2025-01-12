@@ -60,7 +60,7 @@ const App = () => {
     console.log(`${index} selected`)
   }
 
-  function handleDragUser(info: {destination: {index: number}, source: {index: number}}): void {
+  function handleDragUser(info: DropResult): void {
     if (info.destination) {
       setUsers(reorderList(users, info.source.index, info.destination.index))
     }
@@ -133,7 +133,11 @@ const App = () => {
 
       <hr/>
 
-      <UserList users={users} onDragEnd={handleDragUser}/>
+      <UserList
+        users={users}
+        onDragEnd={handleDragUser}
+        dragItemStyle={{background: 'lightblue', borderRadius: '16px'}}
+      />
     </>
     )
   }
@@ -151,8 +155,8 @@ const ListItem = ({item}: {item: Story}) => (
     <span>
       <a href={item.url}>{item.title} - {item.author}</a>
     </span>
-    <span> | {item.numComments} comments</span>
-    <span> | {item.points} points</span>
+    <span> | {item.numComments} comments</span>
+    <span> | {item.points} points</span>
   </li>
 )
 
@@ -248,34 +252,48 @@ const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
 
 interface UserListProps {
   users: User[],
-  onDragEnd: () => void
+  onDragEnd: (result: DropResult) => void
+  dragItemStyle: {[key:string]: string}
+  dragListStyle: {[key:string]: string}
 }
 
-const UserList = ({users = [], onDragEnd}: UserListProps) => (
+const UserList = ({users = [], onDragEnd, dragItemStyle, dragListStyle}: UserListProps) => (
   <DragDropContext onDragEnd={onDragEnd}>
     <Droppable droppableId='droppable'>
-      {(provided) => (
-        <div ref={provided.innerRef} {...provided.droppableProps}>
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          style={{
+            ...(snapshot.isDraggingOver ? dragListStyle : {}),
+          }}
+        >
           {users.map((user, index) => (
             <Draggable key={user.id} index={index} draggableId={user.id}>
-              {provided => (
+              {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.draggableProps}
                   {...provided.dragHandleProps}
+                  style={{
+                    padding: '8px 16px',
+                    ...provided.draggableProps.style,
+                    ...(snapshot.isDragging ? dragItemStyle : {})
+                  }}
                 >
-                  {user.firstName} {user.lastName}
+                  <UserItem user={user}></UserItem>
                 </div> 
               )}
             </Draggable>
           ))}
+          {provided.placeholder}
         </div>
       )}
     </Droppable>
   </DragDropContext>
 )
 
-const User = (user: User) => (
+const UserItem = ({user}: {user: User}) => (
   <div>{user.firstName} {user.lastName}</div>
 )
 
