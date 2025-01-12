@@ -12,10 +12,10 @@ type ListProps = {
 
 type InputWithLabelProps = {
   id: string
-  label: string
   value: string
   type?: string
-  onInputChange: (value: string) => void 
+  children: ReactNode
+  onInputChange: (value: string) => void
 }
 
 function useStorageState(key:string, initialState: string): [string, Function] {
@@ -85,10 +85,11 @@ const App = () => {
       
       <InputWithLabel
         id='search'
-        label='Search'
         value={searchTerm}
         onInputChange={handleSearch}
-      />
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
 
       <hr/>
       
@@ -160,11 +161,11 @@ const ListItem = ({item}: {item: Story}) => (
   </li>
 )
 
-const InputWithLabel = ({id, label, value, type = 'text', onInputChange}: InputWithLabelProps) => {
+const InputWithLabel = ({id, children, value, type = 'text', onInputChange}: InputWithLabelProps) => {
 
   return (
     <>
-      <label htmlFor={id}>{label}: </label>
+      <label htmlFor={id}>{children}</label>
       <input
        id={id}
        type={type}
@@ -254,7 +255,7 @@ interface UserListProps {
   users: User[],
   onDragEnd: (result: DropResult) => void
   dragItemStyle: {[key:string]: string}
-  dragListStyle: {[key:string]: string}
+  dragListStyle?: {[key:string]: string}
 }
 
 const UserList = ({users = [], onDragEnd, dragItemStyle, dragListStyle}: UserListProps) => (
