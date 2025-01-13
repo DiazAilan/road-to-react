@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useEffect, useState } from 'react';
+import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import './App.scss';
 import storiesMockup from './mockups/stories.json';
 import usersMockup from './mockups/users.json';
@@ -15,6 +15,7 @@ type InputWithLabelProps = {
   value: string
   type?: string
   children: ReactNode
+  isFocused: boolean
   onInputChange: (value: string) => void
 }
 
@@ -86,6 +87,7 @@ const App = () => {
       <InputWithLabel
         id='search'
         value={searchTerm}
+        isFocused
         onInputChange={handleSearch}
       >
         <strong>Search:</strong>
@@ -161,16 +163,33 @@ const ListItem = ({item}: {item: Story}) => (
   </li>
 )
 
-const InputWithLabel = ({id, children, value, type = 'text', onInputChange}: InputWithLabelProps) => {
+const InputWithLabel = ({
+  id,
+  children,
+  isFocused,
+  onInputChange,
+  type = 'text',
+  value
+}: InputWithLabelProps) => {
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isFocused])
 
   return (
     <>
       <label htmlFor={id}>{children}</label>
       <input
-       id={id}
-       type={type}
-       value={value}
-       onChange={event => onInputChange(event.target.value)}
+        id={id}
+        autoFocus={isFocused}
+        onChange={event => onInputChange(event.target.value)}
+        ref={inputRef}
+        type={type}
+        value={value}
       />
     </>
   )
