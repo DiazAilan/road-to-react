@@ -5,6 +5,7 @@ import usersMockup from './mockups/users.json';
 import { Story } from './models/story';
 import { User } from './models/user';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import html2canvas from 'html2canvas';
 
 type ListProps = {
   list: Story[]
@@ -33,13 +34,15 @@ function useStorageState(key:string, initialState: string): [string, Function] {
 
 const App = () => {
 
-  const stories: Story[] = storiesMockup
+  const stories: Story[] = storiesMockup;
 
-  const [searchTerm, setSearchTerm] = useStorageState('search', 'React')
-  const [isButtonActive, setIsButtonActive] = useState(false)
-  const [favoriteMascot, setFavoriteMascot] = useState('')
-  const [isChecked, setIsChecked] = useState(false)
-  const [users, setUsers] = useState<User[]>(usersMockup)
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+  const [isButtonActive, setIsButtonActive] = useState(false);
+  const [favoriteMascot, setFavoriteMascot] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
+  const [users, setUsers] = useState<User[]>(usersMockup);
+
+  const printRef = useRef<HTMLDivElement>(null);
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
@@ -79,6 +82,25 @@ const App = () => {
   const searchedStories = stories.filter(story => 
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  async function handleDownloadImage(): Promise<void> {
+    const element = printRef.current as HTMLDivElement;
+    const canvas = await html2canvas(element);
+
+    const data = canvas.toDataURL('image/jpg');
+    const link = document.createElement('a');
+
+    if (typeof link.download === 'string') {
+      link.href = data;
+      link.download = 'image.jpg';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      window.open(data);
+    }
+  }
 
   return (
     <>
@@ -141,6 +163,10 @@ const App = () => {
         onDragEnd={handleDragUser}
         dragItemStyle={{background: 'lightblue', borderRadius: '16px'}}
       />
+
+      <hr/>
+
+      <Canvas printRef={printRef} onDownloadImage={handleDownloadImage}/>
     </>
     )
   }
@@ -254,7 +280,7 @@ const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
 
   return (
     <div className='dropdown'>
-      <button onClick={handleOpen}>{triggerLabel}</button>
+      <Button onClick={handleOpen}>{triggerLabel}</Button>
       {isOpen
         ? <ul className="menu">
             {menu.map((menuItem, index) => (
@@ -315,6 +341,21 @@ const UserList = ({users = [], onDragEnd, dragItemStyle, dragListStyle}: UserLis
 
 const UserItem = ({user}: {user: User}) => (
   <div>{user.firstName} {user.lastName}</div>
+)
+
+interface CanvasProps {
+  onDownloadImage: () => void,
+  printRef: React.RefObject<HTMLDivElement>
+}
+
+const Canvas = ({onDownloadImage: onDownloadImage, printRef}: CanvasProps) => (
+  <div>
+    <Button onClick={onDownloadImage}>
+      Download as Image
+    </Button>
+    <div>I will not be in the image.</div>
+    <div ref={printRef}>I will be in the image.</div>
+  </div>
 )
 
 export default App
