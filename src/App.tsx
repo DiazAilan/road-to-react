@@ -6,6 +6,7 @@ import { Story } from './models/story';
 import { User } from './models/user';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
+import { useIsOverflow } from './useIsOverflow';
 
 type ListProps = {
   list: Story[]
@@ -43,6 +44,13 @@ const App = () => {
   const [users, setUsers] = useState<User[]>(usersMockup);
 
   const printRef = useRef<HTMLDivElement>(null);
+
+  const overflowRef = useRef<HTMLDivElement>(null);
+  const isOverflow = useIsOverflow(overflowRef, (isOverflowFromCallback) => {
+    console.log(isOverflowFromCallback);
+  });
+
+  console.log(isOverflow)
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
@@ -171,6 +179,12 @@ const App = () => {
       <hr/>
 
       <Slider initial={10} max={25} onChange={value => console.log(value)}/>
+
+      <hr/>
+
+      <div style={{ overflow: 'auto', height: '100px' }} ref={overflowRef}>
+        <div style={{ height: '200px' }}>Overflow debugger</div>
+      </div>
     </>
     )
   }
