@@ -12,25 +12,21 @@ export const InlineHandlersList = () => {
   }
 
   return (
-    stories.map((story) => <InlineHandlersItem story={story} onClick={handleDeleteStory}/>)
+    stories.map((story) => <InlineHandlersItem story={story} onDelete={handleDeleteStory}/>)
   )
 }
 
 interface InlineHandlersItemProps {
   story: Story;
-  onClick: (storyId: number) => void;
+  onDelete: (storyId: number) => void;
 } 
 
-const InlineHandlersItem = ({story, onClick}: InlineHandlersItemProps) => {
-
-  function handleOnClick(story: Story): void {
-    onClick(story.id)
-  }
+const InlineHandlersItem = ({story, onDelete}: InlineHandlersItemProps) => {
   
   return (
     <div>
       <label>{story.title} | {story.author}</label>
-      <Button onClick={() => handleOnClick(story)}>Delete</Button>
+      <Button onClick={() => onDelete(story.id)}>Delete</Button>
     </div>
   )
 }
