@@ -7,6 +7,8 @@ import { User } from './models/user';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
 import { useIsOverflow } from './useIsOverflow';
+import { Button } from './Button';
+import { InlineHandlersList } from './InlineHandlersList';
 
 type ListProps = {
   list: Story[]
@@ -113,6 +115,13 @@ const App = () => {
   return (
     <>
       <h1>My Road to React</h1>
+
+      <hr/>
+
+      <h2>Inline Handlers' List</h2>
+      <InlineHandlersList></InlineHandlersList>
+
+      <hr/>
       
       <InputWithLabel
         id='search'
@@ -236,20 +245,6 @@ const InputWithLabel = ({
         value={value}
       />
     </>
-  )
-}
-
-interface ButtonProps {
-  type?: 'button' | 'reset' | 'submit'
-  onClick: () => void
-  children: ReactNode
-}
-
-const Button = ({type = 'button', onClick, children, ...rest}: ButtonProps) => {
-  return (
-    <button type={type} onClick={onClick} {...rest}>
-      {children}
-    </button>
   )
 }
 
