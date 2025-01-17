@@ -12,7 +12,7 @@ export const InlineHandlersList = () => {
   }
 
   return (
-    stories.map((story) => <InlineHandlersItem story={story} onDelete={handleDeleteStory}/>)
+    stories.map((story) => <InlineHandlersItem story={story} onDelete={handleDeleteStory} key={story.id}/>)
   )
 }
 
