@@ -2,19 +2,15 @@ import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, Mou
 import './App.scss';
 import storiesMockup from './mockups/stories.json';
 import usersMockup from './mockups/users.json';
-import { Story } from './models/story';
 import { User } from './models/user';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
 import { useIsOverflow } from './useIsOverflow';
 import { Button } from './Button';
-import { InlineHandlersList } from './InlineHandlersList';
+import { StoriesList } from './StoriesList';
+import { Story } from './models/story';
 
-type ListProps = {
-  list: Story[]
-}
-
-type InputWithLabelProps = {
+interface InputWithLabelProps {
   id: string
   value: string
   type?: string
@@ -37,8 +33,7 @@ function useStorageState(key:string, initialState: string): [string, Function] {
 
 const App = () => {
 
-  const stories: Story[] = storiesMockup;
-
+  const [stories, setStories] = useState<Story[]>(storiesMockup)
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [favoriteMascot, setFavoriteMascot] = useState('');
@@ -56,6 +51,10 @@ const App = () => {
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
+  }
+
+  function handleDeleteStory(id: number): void {
+    setStories(stories.filter(story => story.id !== id))
   }
 
   function handleButtonClick(): void {
@@ -117,11 +116,6 @@ const App = () => {
       <h1>My Road to React</h1>
 
       <hr/>
-
-      <h2>Inline Handlers' List</h2>
-      <InlineHandlersList></InlineHandlersList>
-
-      <hr/>
       
       <InputWithLabel
         id='search'
@@ -134,7 +128,7 @@ const App = () => {
 
       <hr/>
       
-      <List list={searchedStories}/>
+      <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
 
       <Button onClick={handleButtonClick}>
         {isButtonActive ? 'Try again!' : 'Toggle me!'}
@@ -195,26 +189,8 @@ const App = () => {
         <div style={{ height: '200px' }}>Overflow debugger</div>
       </div>
     </>
-    )
-  }
-
-const List = ({list}: ListProps) => (
-  <ul>
-    {list.map(item => (
-      <ListItem item={item} key={item.id}/>
-    ))}
-  </ul>
-)
-
-const ListItem = ({item}: {item: Story}) => (
-  <li>
-    <span>
-      <a href={item.url}>{item.title} - {item.author}</a>
-    </span>
-    <span> | {item.numComments} comments</span>
-    <span> | {item.points} points</span>
-  </li>
-)
+  )
+}
 
 const InputWithLabel = ({
   id,
