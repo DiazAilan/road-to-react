@@ -35,6 +35,8 @@ const App = () => {
 
   const [stories, setStories] = useState<Story[]>([]);
   const [storiesLoading, setStoriesLoading] = useState(false);
+  const [storiesError, setStoriesError] = useState()
+
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [favoriteMascot, setFavoriteMascot] = useState('');
@@ -55,7 +57,8 @@ const App = () => {
     getAsyncStories().then(result => {
       setStories(result.data.stories);
       setStoriesLoading(false)
-    });
+    })
+    .catch(error => setStoriesError(error))
   }, []);
 
   function handleSearch(query: string): void {
@@ -136,6 +139,8 @@ const App = () => {
       </InputWithLabel>
 
       <hr/>
+
+      {storiesError && <p>Something went wrong...</p>}
       
       {storiesLoading
         ? <Loader/>
