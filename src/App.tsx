@@ -1,6 +1,5 @@
 import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, MouseEvent } from 'react';
 import './App.scss';
-import storiesMockup from './mockups/stories.json';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
@@ -135,7 +134,10 @@ const App = () => {
 
       <hr/>
       
-      <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
+      {searchedStories.length
+        ? <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
+        : <Loader/>
+      }
 
       <Button onClick={handleButtonClick}>
         {isButtonActive ? 'Try again!' : 'Toggle me!'}
@@ -438,5 +440,9 @@ const Slider = ({initial, max, onChange}: SliderProps) => {
     </>
   );
 };
+
+const Loader = () => (
+  <div className='loader'>Loading...</div>
+)
 
 export default App
