@@ -9,6 +9,7 @@ import { useIsOverflow } from './useIsOverflow';
 import { Button } from './Button';
 import { StoriesList } from './StoriesList';
 import { Story } from './models/story';
+import { getAsyncStories } from './StoriesService';
 
 interface InputWithLabelProps {
   id: string
@@ -33,7 +34,7 @@ function useStorageState(key:string, initialState: string): [string, Function] {
 
 const App = () => {
 
-  const [stories, setStories] = useState<Story[]>(storiesMockup)
+  const [stories, setStories] = useState<Story[]>([])
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [favoriteMascot, setFavoriteMascot] = useState('');
@@ -48,6 +49,12 @@ const App = () => {
   });
 
   console.log(isOverflow)
+
+  useEffect(() => {
+    getAsyncStories().then(result => {
+      setStories(result.data.stories);
+    });
+  }, []);
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
