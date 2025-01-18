@@ -33,7 +33,8 @@ function useStorageState(key:string, initialState: string): [string, Function] {
 
 const App = () => {
 
-  const [stories, setStories] = useState<Story[]>([])
+  const [stories, setStories] = useState<Story[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [favoriteMascot, setFavoriteMascot] = useState('');
@@ -50,8 +51,10 @@ const App = () => {
   console.log(isOverflow)
 
   useEffect(() => {
+    setStoriesLoading(true)
     getAsyncStories().then(result => {
       setStories(result.data.stories);
+      setStoriesLoading(false)
     });
   }, []);
 
@@ -134,9 +137,9 @@ const App = () => {
 
       <hr/>
       
-      {searchedStories.length
-        ? <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
-        : <Loader/>
+      {storiesLoading
+        ? <Loader/>
+        : <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
       }
 
       <Button onClick={handleButtonClick}>
