@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, MouseEvent } from 'react';
+import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, MouseEvent, useReducer, Dispatch } from 'react';
 import './App.scss';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
@@ -31,9 +31,28 @@ function useStorageState(key:string, initialState: string): [string, Function] {
   return [value, setValue]
 }
 
+interface Action<T> {
+  type: string;
+  payload?: T;
+}
+
+type StoriesAction = Action<Story[]> | Action<{id: number}>
+
+const storiesReducer = (state: Story[], action: StoriesAction) => {
+  switch (action.type) {
+    case 'SET_STORIES':
+      return action.payload;
+    case 'REMOVE_STORY':
+      return state.filter(story => story.id !== (action.payload as { id: number }).id);
+    default:
+      throw new Error();
+  }
+}
+
 const App = () => {
 
-  const [stories, setStories] = useState<Story[]>([]);
+  const [stories, dispatchStories] = useReducer(storiesReducer, []);
+
   const [storiesLoading, setStoriesLoading] = useState(false);
   const [storiesError, setStoriesError] = useState()
 
@@ -55,7 +74,10 @@ const App = () => {
   useEffect(() => {
     setStoriesLoading(true)
     getAsyncStories().then(result => {
-      setStories(result.data.stories);
+      dispatchStories({
+        type: 'SET_STORIES',
+        payload: result.data.stories,
+      });
       setStoriesLoading(false)
     })
     .catch(error => setStoriesError(error))
@@ -66,7 +88,10 @@ const App = () => {
   }
 
   function handleDeleteStory(id: number): void {
-    setStories(stories.filter(story => story.id !== id))
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: id,
+    })
   }
 
   function handleButtonClick(): void {
