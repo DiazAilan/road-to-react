@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, MouseEvent, useReducer, Dispatch } from 'react';
+import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, MouseEvent, useReducer, Reducer } from 'react';
 import './App.scss';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
@@ -9,6 +9,7 @@ import { Button } from './Button';
 import { StoriesList } from './StoriesList';
 import { Story } from './models/story';
 import { getAsyncStories } from './StoriesService';
+import React from 'react';
 
 interface InputWithLabelProps {
   id: string
@@ -31,23 +32,30 @@ function useStorageState(key:string, initialState: string): [string, Function] {
   return [value, setValue]
 }
 
-interface Action<T> {
-  type: string;
-  payload?: T;
-}
+type StoriesState = Story[];
 
-type StoriesAction = Action<Story[]> | Action<{id: number}>
+type StoriesSetAction = {
+  type: 'SET_STORIES';
+  payload: Story[];
+};
 
-const storiesReducer = (state: Story[], action: StoriesAction) => {
+type StoriesRemoveAction = {
+  type: 'REMOVE_STORY';
+  payload: {id: number};
+};
+
+type StoriesAction = StoriesSetAction | StoriesRemoveAction;
+
+const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
     case 'SET_STORIES':
       return action.payload;
     case 'REMOVE_STORY':
-      return state.filter(story => story.id !== (action.payload as { id: number }).id);
+      return state.filter((story: Story) => action.payload.id !== story.id);
     default:
       throw new Error();
   }
-}
+};
 
 const App = () => {
 
@@ -90,7 +98,7 @@ const App = () => {
   function handleDeleteStory(id: number): void {
     dispatchStories({
       type: 'REMOVE_STORY',
-      payload: id,
+      payload: {id},
     })
   }
 
