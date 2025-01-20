@@ -1,15 +1,14 @@
-import { cloneElement, ReactElement, ReactNode, useEffect, useRef, useState, MouseEvent, useReducer, Reducer } from 'react';
-import './App.scss';
-import usersMockup from './mockups/users.json';
-import { User } from './models/user';
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { useIsOverflow } from './useIsOverflow';
+import { cloneElement, MouseEvent, ReactElement, ReactNode, useEffect, useReducer, useRef, useState } from 'react';
+import './App.scss';
 import { Button } from './Button';
-import { StoriesList } from './StoriesList';
+import usersMockup from './mockups/users.json';
 import { Story } from './models/story';
+import { User } from './models/user';
+import { StoriesList } from './StoriesList';
 import { getAsyncStories } from './StoriesService';
-import React from 'react';
+import { useIsOverflow } from './useIsOverflow';
 
 interface InputWithLabelProps {
   id: string
@@ -32,10 +31,14 @@ function useStorageState(key:string, initialState: string): [string, Function] {
   return [value, setValue]
 }
 
-type StoriesState = Story[];
+type StoriesState = {
+  data: Story[];
+  isLoading: boolean;
+  hasError: boolean;
+}
 
-type StoriesSetAction = {
-  type: 'SET_STORIES';
+type StoriesFetchSuccessAction = {
+  type: 'STORIES_FETCH_SUCCESS';
   payload: Story[];
 };
 
@@ -44,14 +47,46 @@ type StoriesRemoveAction = {
   payload: {id: number};
 };
 
-type StoriesAction = StoriesSetAction | StoriesRemoveAction;
+type StoriesFetchInitAction = {
+  type: 'STORIES_FETCH_INIT'
+}
+
+type StoriesFetchFailureAction = {
+  type: 'STORIES_FETCH_FAILURE'
+}
+
+type StoriesAction =
+    StoriesFetchSuccessAction
+  | StoriesRemoveAction
+  | StoriesFetchInitAction
+  | StoriesFetchFailureAction
 
 const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
-    case 'SET_STORIES':
-      return action.payload;
+    case 'STORIES_FETCH_INIT':
+      return {
+        ...state,
+        isLoading: true,
+        hasError: false, 
+      };
+    case 'STORIES_FETCH_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        hasError: false, 
+        data: action.payload
+      };
+    case 'STORIES_FETCH_FAILURE':
+      return {
+        ...state,
+        isLoading: false,
+        hasError: true, 
+      };
     case 'REMOVE_STORY':
-      return state.filter((story: Story) => action.payload.id !== story.id);
+      return {
+        ...state,
+        data: state.data.filter((story: Story) => action.payload.id !== story.id)
+      }
     default:
       throw new Error();
   }
@@ -59,10 +94,10 @@ const storiesReducer = (state: StoriesState, action: StoriesAction) => {
 
 const App = () => {
 
-  const [stories, dispatchStories] = useReducer(storiesReducer, []);
-
-  const [storiesLoading, setStoriesLoading] = useState(false);
-  const [storiesError, setStoriesError] = useState()
+  const [stories, dispatchStories] = useReducer(
+    storiesReducer,
+    { data: [], isLoading: false, hasError: false }
+  );
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [isButtonActive, setIsButtonActive] = useState(false);
@@ -80,15 +115,16 @@ const App = () => {
   console.log(isOverflow)
 
   useEffect(() => {
-    setStoriesLoading(true)
-    getAsyncStories().then(result => {
-      dispatchStories({
-        type: 'SET_STORIES',
+    dispatchStories({type: 'STORIES_FETCH_INIT'})
+    
+    getAsyncStories()
+      .then(result => {
+        dispatchStories({
+        type: 'STORIES_FETCH_SUCCESS',
         payload: result.data.stories,
-      });
-      setStoriesLoading(false)
-    })
-    .catch(error => setStoriesError(error))
+        });
+      })
+      .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
   }, []);
 
   function handleSearch(query: string): void {
@@ -133,7 +169,7 @@ const App = () => {
     return output;
   }
 
-  const searchedStories = stories.filter(story => 
+  const searchedStories = stories.data.filter(story => 
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -173,9 +209,9 @@ const App = () => {
 
       <hr/>
 
-      {storiesError && <p>Something went wrong...</p>}
+      {stories.hasError && <p>Something went wrong...</p>}
       
-      {storiesLoading
+      {stories.isLoading
         ? <Loader/>
         : <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
       }
