@@ -1,7 +1,7 @@
 import { Story } from './models/story';
 
 export async function getAsyncStories(): Promise<Story[]> {
-  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?tags=story'
+  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=React'
   const response = await fetch(API_ENDPOINT)
   const data = await response.json();
   return data.hits
