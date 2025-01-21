@@ -118,10 +118,10 @@ const App = () => {
     dispatchStories({type: 'STORIES_FETCH_INIT'})
     
     getAsyncStories()
-      .then(result => {
+      .then(stories => {
         dispatchStories({
-        type: 'STORIES_FETCH_SUCCESS',
-        payload: result.data.stories,
+          type: 'STORIES_FETCH_SUCCESS',
+          payload: stories,
         });
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
