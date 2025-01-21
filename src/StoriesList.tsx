@@ -8,7 +8,7 @@ export interface StoriesListProps {
 
 export const StoriesList = ({stories, onDeleteStory}: StoriesListProps) => (
   <ul>
-    {stories.map((story) => <StoryItem story={story} onDelete={onDeleteStory} key={story.id}/>)}
+    {stories.map((story) => <StoryItem story={story} onDelete={onDeleteStory} key={story.objectID}/>)}
   </ul> 
 )
 
@@ -24,6 +24,6 @@ const StoryItem = ({story, onDelete}: StoryItemProps) => (
     </span>
     <span> | {story.numComments} comments</span>
     <span> | {story.points} points</span>
-    <Button onClick={() => onDelete(story.id)}>Delete</Button>
+    <Button onClick={() => onDelete(story.objectID)}>Delete</Button>
   </li>
 )

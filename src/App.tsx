@@ -85,7 +85,7 @@ const storiesReducer = (state: StoriesState, action: StoriesAction) => {
     case 'REMOVE_STORY':
       return {
         ...state,
-        data: state.data.filter((story: Story) => action.payload.id !== story.id)
+        data: state.data.filter((story: Story) => action.payload.id !== story.objectID)
       }
     default:
       throw new Error();
@@ -169,8 +169,8 @@ const App = () => {
     return output;
   }
 
-  const searchedStories = stories.data.filter(story => 
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const searchedStories = stories.data?.filter(story => 
+    story.title.toLowerCase().includes(searchTerm.toLowerCase()) || []
   );
 
   async function handleDownloadImage(): Promise<void> {

@@ -1,13 +1,9 @@
-import storiesMockup from './mockups/stories.json';
 import { Story } from './models/story';
 
-export function getAsyncStories(): Promise<{data: {stories: Story[]}}> {
-  return new Promise((resolve) => {
-    setTimeout(
-      () => resolve({data: {stories: storiesMockup}}),
-      2000
-    )
-  })
+export async function getAsyncStories(): Promise<{data: {stories: Story[]}}> {
+    const response = await fetch('https://hn.algolia.com/api/v1/search?tags=story')
+    const data = await response.json();
+    return {data: {stories: data.hits}}
 }
 
 export function getError(): Promise<Error> {
