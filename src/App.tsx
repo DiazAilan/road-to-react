@@ -125,9 +125,9 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
-  }, [searchTerm])
+  }, [])
 
-  useEffect(() => handleFetchStories, [handleFetchStories]);
+  useEffect(() => handleFetchStories, []);
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
@@ -193,6 +193,7 @@ const App = () => {
   return (
     <>
       <h1>My Road to React</h1>
+      <h2>DEBUGGER: {searchTerm}</h2>
 
       <hr/>
       
@@ -204,6 +205,7 @@ const App = () => {
       >
         <strong>Search:</strong>
       </InputWithLabel>
+      <Button onClick={handleFetchStories}>Send</Button>
 
       <hr/>
 
