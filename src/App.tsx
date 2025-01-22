@@ -169,10 +169,6 @@ const App = () => {
     return output;
   }
 
-  const searchedStories = stories.data?.filter(story => 
-    story.title.toLowerCase().includes(searchTerm.toLowerCase()) || []
-  );
-
   async function handleDownloadImage(): Promise<void> {
     const element = printRef.current as HTMLDivElement;
     const canvas = await html2canvas(element);
@@ -213,7 +209,7 @@ const App = () => {
       
       {stories.isLoading
         ? <Loader/>
-        : <StoriesList stories={searchedStories} onDeleteStory={handleDeleteStory}/>
+        : <StoriesList stories={stories.data} onDeleteStory={handleDeleteStory}/>
       }
 
       <Button onClick={handleButtonClick}>
