@@ -1,96 +1,19 @@
-import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
+import { DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { cloneElement, MouseEvent, ReactElement, ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
+import { Dropdown } from './Dropdown';
+import { InputWithLabel } from './InputLabel';
 import usersMockup from './mockups/users.json';
-import { Story } from './models/story';
 import { User } from './models/user';
+import { Slider } from './Slider';
 import { StoriesList } from './StoriesList';
-import { getAsyncStories } from './StoriesService';
+import { storiesReducer } from './storiesReducer';
 import { useIsOverflow } from './useIsOverflow';
-
-interface InputWithLabelProps {
-  id: string
-  value: string
-  type?: string
-  children: ReactNode
-  isFocused: boolean
-  onInputChange: (value: string) => void
-}
-
-function useStorageState(key:string, initialState: string): [string, Function] {
-  const [value, setValue] = useState(
-    localStorage.getItem(key) ?? initialState
-  ) 
-    
-  useEffect(() => {
-    localStorage.setItem(key, value);
-  }, [value, key])
-
-  return [value, setValue]
-}
-
-type StoriesState = {
-  data: Story[];
-  isLoading: boolean;
-  hasError: boolean;
-}
-
-type StoriesFetchSuccessAction = {
-  type: 'STORIES_FETCH_SUCCESS';
-  payload: Story[];
-};
-
-type StoriesRemoveAction = {
-  type: 'REMOVE_STORY';
-  payload: {id: number};
-};
-
-type StoriesFetchInitAction = {
-  type: 'STORIES_FETCH_INIT'
-}
-
-type StoriesFetchFailureAction = {
-  type: 'STORIES_FETCH_FAILURE'
-}
-
-type StoriesAction =
-    StoriesFetchSuccessAction
-  | StoriesRemoveAction
-  | StoriesFetchInitAction
-  | StoriesFetchFailureAction
-
-const storiesReducer = (state: StoriesState, action: StoriesAction) => {
-  switch (action.type) {
-    case 'STORIES_FETCH_INIT':
-      return {
-        ...state,
-        isLoading: true,
-        hasError: false, 
-      };
-    case 'STORIES_FETCH_SUCCESS':
-      return {
-        ...state,
-        isLoading: false,
-        hasError: false, 
-        data: action.payload
-      };
-    case 'STORIES_FETCH_FAILURE':
-      return {
-        ...state,
-        isLoading: false,
-        hasError: true, 
-      };
-    case 'REMOVE_STORY':
-      return {
-        ...state,
-        data: state.data.filter((story: Story) => action.payload.id !== story.objectID)
-      }
-    default:
-      throw new Error();
-  }
-};
+import { UserList } from './UsersList';
+import { useStorageState } from './useStorageState';
+import { getAsyncStories } from './storiesService';
 
 const App = () => {
 
@@ -99,7 +22,8 @@ const App = () => {
     { data: [], isLoading: false, hasError: false }
   );
 
-  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+  const [searchInput, setSearchInput] = useStorageState('search', 'React');
+  const [searchQuery, setSearchQuery] = useState(searchInput);
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [favoriteMascot, setFavoriteMascot] = useState('');
   const [isChecked, setIsChecked] = useState(false);
@@ -117,7 +41,7 @@ const App = () => {
   const handleFetchStories = useCallback(() => {
     dispatchStories({type: 'STORIES_FETCH_INIT'})
     
-    getAsyncStories(searchTerm)
+    getAsyncStories(searchQuery)
       .then(stories => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
@@ -125,12 +49,12 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
-  }, [])
+  }, [searchQuery])
 
-  useEffect(() => handleFetchStories, []);
+  useEffect(() => handleFetchStories(), [handleFetchStories]);
 
   function handleSearch(query: string): void {
-    setSearchTerm(query);
+    setSearchInput(query);
   }
 
   function handleDeleteStory(id: number): void {
@@ -190,22 +114,25 @@ const App = () => {
     }
   }
 
+  function handleSearchSubmit(): void {
+    setSearchQuery(searchInput)
+  }
+
   return (
     <>
       <h1>My Road to React</h1>
-      <h2>DEBUGGER: {searchTerm}</h2>
-
+      
       <hr/>
       
       <InputWithLabel
         id='search'
-        value={searchTerm}
+        value={searchInput}
         isFocused
         onInputChange={handleSearch}
       >
         <strong>Search:</strong>
       </InputWithLabel>
-      <Button onClick={handleFetchStories}>Send</Button>
+      <Button disabled={!searchInput} onClick={handleSearchSubmit}>Send</Button>
 
       <hr/>
 
@@ -278,38 +205,6 @@ const App = () => {
   )
 }
 
-const InputWithLabel = ({
-  id,
-  children,
-  isFocused,
-  onInputChange,
-  type = 'text',
-  value
-}: InputWithLabelProps) => {
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isFocused && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [isFocused])
-
-  return (
-    <>
-      <label htmlFor={id}>{children}</label>
-      <input
-        id={id}
-        autoFocus={isFocused}
-        onChange={event => onInputChange(event.target.value)}
-        ref={inputRef}
-        type={type}
-        value={value}
-      />
-    </>
-  )
-}
-
 interface RadioButtonProps {
   value: boolean;
   onToggle: () => void;
@@ -340,84 +235,6 @@ const Checkbox = ({value, children, onChange}: CheckboxProps) => {
   )
 }
 
-interface DropdownProps {
-  onClickItem: (index: number) => void;
-  triggerLabel: string;
-  menu: ReactElement[];
-}
-
-const Dropdown = ({onClickItem, menu, triggerLabel}: DropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  function handleOpen(): void {
-    setIsOpen(!isOpen)
-  }
-
-  return (
-    <div className='dropdown'>
-      <Button onClick={handleOpen}>{triggerLabel}</Button>
-      {isOpen
-        ? <ul className="menu">
-            {menu.map((menuItem, index) => (
-              <li key={index} className="menu-item" onClick={() => onClickItem(index)}>
-                {cloneElement(menuItem, {
-                  onClick: () => setIsOpen(false)               
-                })}
-              </li>
-            ))}
-          </ul>
-        : null}
-    </div>
-  )
-}
-
-interface UserListProps {
-  users: User[],
-  onDragEnd: (result: DropResult) => void
-  dragItemStyle: {[key:string]: string}
-  dragListStyle?: {[key:string]: string}
-}
-
-const UserList = ({users = [], onDragEnd, dragItemStyle, dragListStyle}: UserListProps) => (
-  <DragDropContext onDragEnd={onDragEnd}>
-    <Droppable droppableId='droppable'>
-      {(provided, snapshot) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          style={{
-            ...(snapshot.isDraggingOver ? dragListStyle : {}),
-          }}
-        >
-          {users.map((user, index) => (
-            <Draggable key={user.id} index={index} draggableId={user.id}>
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  style={{
-                    padding: '8px 16px',
-                    ...provided.draggableProps.style,
-                    ...(snapshot.isDragging ? dragItemStyle : {})
-                  }}
-                >
-                  <UserItem user={user}></UserItem>
-                </div> 
-              )}
-            </Draggable>
-          ))}
-          {provided.placeholder}
-        </div>
-      )}
-    </Droppable>
-  </DragDropContext>
-)
-
-const UserItem = ({user}: {user: User}) => (
-  <div>{user.firstName} {user.lastName}</div>
-)
-
 interface CanvasProps {
   onDownloadImage: () => void,
   printRef: React.RefObject<HTMLDivElement>
@@ -432,91 +249,6 @@ const Canvas = ({onDownloadImage: onDownloadImage, printRef}: CanvasProps) => (
     <div ref={printRef}>I will be in the image.</div>
   </div>
 )
-
-function getPercentage(current: number, max: number): number {
-  return (100 * current) / max;
-}
-
-interface SliderProps {
-  initial: number;
-  max: number;
-  onChange: (value: number) => void;
-}
-
-const Slider = ({initial, max, onChange}: SliderProps) => {
-  const initialPercentage = getPercentage(initial, max);
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const thumbRef = useRef<HTMLDivElement>(null);
-  const currentRef = useRef<HTMLElement>(null);
-
-  const diff = useRef<number>(0);
-
-  function getLeft(percentage: number): string {
-    return `calc(${percentage}% - 5px)`;
-  }
-
-  function getValue(percentage: number, max: number): number {
-    return (max / 100) * percentage;
-  }
-
-  function handleMouseMove(event: any): void {
-    let newX =
-      event.clientX -
-      diff.current -
-      sliderRef.current!.getBoundingClientRect().left;
-
-    const end = sliderRef.current!.offsetWidth - thumbRef.current!.offsetWidth;
-
-    const start = 0;
-
-    if (newX < start) {
-      newX = 0;
-    }
-
-    if (newX > end) {
-      newX = end;
-    }
-
-    const newPercentage = getPercentage(newX, end);
-    const newValue = getValue(newPercentage, max);
-
-    thumbRef.current!.style.left = getLeft(newPercentage);
-
-    currentRef.current!.textContent = newValue.toFixed(2).toString();
-
-    onChange(newValue);
-  }
-
-  function handleMouseUp(): void {
-    document.removeEventListener('mouseup', handleMouseUp);
-    document.removeEventListener('mousemove', handleMouseMove);
-  }
-
-  function handleMouseDown(event: MouseEvent<HTMLElement>): void {
-    diff.current =
-      event.clientX - thumbRef.current!.getBoundingClientRect().left;
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }
-
-  return (
-    <>
-      <div className='slider-header'>
-        <strong ref={currentRef}>{initial.toFixed(2)}</strong>
-        &nbsp;/&nbsp;
-        {max.toFixed(2)}
-      </div>
-      <div className="slider" ref={sliderRef}>
-        <div
-          className="slider-thumb"
-          ref={thumbRef}
-          onMouseDown={handleMouseDown}
-          style={{ left: getLeft(initialPercentage) }}
-        />
-      </div>
-    </>
-  );
-};
 
 const Loader = () => (
   <div className='loader'>Loading...</div>
