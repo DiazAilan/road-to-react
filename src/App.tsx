@@ -117,7 +117,7 @@ const App = () => {
   useEffect(() => {
     dispatchStories({type: 'STORIES_FETCH_INIT'})
     
-    getAsyncStories()
+    getAsyncStories(searchTerm)
       .then(stories => {
         dispatchStories({
           type: 'STORIES_FETCH_SUCCESS',
@@ -125,7 +125,7 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
-  }, []);
+  }, [searchTerm]);
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
