@@ -1,6 +1,6 @@
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { cloneElement, MouseEvent, ReactElement, ReactNode, useEffect, useReducer, useRef, useState } from 'react';
+import { cloneElement, MouseEvent, ReactElement, ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
 import usersMockup from './mockups/users.json';
@@ -114,7 +114,7 @@ const App = () => {
 
   console.log(isOverflow)
 
-  useEffect(() => {
+  const handleFetchStories = useCallback(() => {
     dispatchStories({type: 'STORIES_FETCH_INIT'})
     
     getAsyncStories(searchTerm)
@@ -125,7 +125,9 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
-  }, [searchTerm]);
+  }, [searchTerm])
+
+  useEffect(() => handleFetchStories, [handleFetchStories]);
 
   function handleSearch(query: string): void {
     setSearchTerm(query);
