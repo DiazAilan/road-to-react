@@ -38,20 +38,22 @@ const App = () => {
 
   console.log(isOverflow)
 
-  const handleFetchStories = useCallback(() => {
+  const handleFetchStories = useCallback(async () => {
     dispatchStories({type: 'STORIES_FETCH_INIT'})
+
+    try {
+      const stories = await getAsyncStories(searchQuery)
+      dispatchStories({
+        type: 'STORIES_FETCH_SUCCESS',
+        payload: stories,
+      });
+    } catch {
+      dispatchStories({type: 'STORIES_FETCH_FAILURE'})
+    }
     
-    getAsyncStories(searchQuery)
-      .then(stories => {
-        dispatchStories({
-          type: 'STORIES_FETCH_SUCCESS',
-          payload: stories,
-        });
-      })
-      .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}))
   }, [searchQuery])
 
-  useEffect(() => handleFetchStories(), [handleFetchStories]);
+  useEffect(() => {handleFetchStories()}, [handleFetchStories]);
 
   function handleSearch(query: string): void {
     setSearchInput(query);
