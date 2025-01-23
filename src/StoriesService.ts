@@ -1,10 +1,10 @@
 import { Story } from './models/story';
+import axios from 'axios';
 
 export async function getAsyncStories(query: string): Promise<Story[]> {
   const API_ENDPOINT = `https://hn.algolia.com/api/v1/search?query=${query || 'React'}`
-  const response = await fetch(API_ENDPOINT)
-  const data = await response.json();
-  return data.hits
+  const response = await axios(API_ENDPOINT)
+  return response.data.hits
 }
 
 export function getError(): Promise<Error> {
