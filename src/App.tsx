@@ -1,6 +1,6 @@
 import { DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { FormEvent, ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
 import { Dropdown } from './Dropdown';
@@ -10,10 +10,11 @@ import { User } from './models/user';
 import { Slider } from './Slider';
 import { StoriesList } from './StoriesList';
 import { storiesReducer } from './storiesReducer';
+import { getAsyncStories } from './storiesService';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
-import { getAsyncStories } from './storiesService';
+import { SearchForm } from './SearchForm';
 
 const App = () => {
 
@@ -55,7 +56,7 @@ const App = () => {
 
   useEffect(() => {handleFetchStories()}, [handleFetchStories]);
 
-  function handleSearch(query: string): void {
+  function handleSearchInput(query: string): void {
     setSearchInput(query);
   }
 
@@ -116,25 +117,21 @@ const App = () => {
     }
   }
 
-  function handleSearchSubmit(): void {
-    setSearchQuery(searchInput)
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>): void {
+    setSearchQuery(searchInput);
+
+    event.preventDefault();
   }
 
   return (
     <>
       <h1>My Road to React</h1>
-      
-      <hr/>
-      
-      <InputWithLabel
-        id='search'
-        value={searchInput}
-        isFocused
-        onInputChange={handleSearch}
-      >
-        <strong>Search:</strong>
-      </InputWithLabel>
-      <Button disabled={!searchInput} onClick={handleSearchSubmit}>Send</Button>
+
+      <SearchForm
+        onSubmit={handleSearchSubmit}
+        searchInput={searchInput}
+        onInputChange={handleSearchInput}
+      />
 
       <hr/>
 
