@@ -8,17 +8,25 @@ interface SearchFormProps {
   onInputChange: (query: string) => void;
 }
 
-export const SearchForm = ({ onSubmit, searchInput, onInputChange }: SearchFormProps) => (
-  <form onSubmit={onSubmit}>
-    <InputWithLabel
-      id='serach'
-      value={searchInput}
-      isFocused
-      onInputChange={onInputChange}
-    >
-      <strong>Search: </strong>
-    </InputWithLabel>
+export const SearchForm = ({ onSubmit, searchInput, onInputChange }: SearchFormProps) => {
+  
+  function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {
+    onSubmit(event);
+    event.preventDefault();
+  }
+  
+  return (
+    <form onSubmit={submitWithoutEventDefault}>
+      <InputWithLabel
+        id='serach'
+        value={searchInput}
+        isFocused
+        onInputChange={onInputChange}
+      >
+        <strong>Search: </strong>
+      </InputWithLabel>
 
-    <Button type='submit' disabled={!searchInput}>Submit</Button>
-  </form>
-)
+      <Button type='submit' disabled={!searchInput}>Submit</Button>
+    </form>
+  )
+}

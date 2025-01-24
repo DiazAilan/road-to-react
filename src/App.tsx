@@ -4,9 +4,9 @@ import { FormEvent, ReactNode, useCallback, useEffect, useReducer, useRef, useSt
 import './App.scss';
 import { Button } from './Button';
 import { Dropdown } from './Dropdown';
-import { InputWithLabel } from './InputLabel';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
+import { SearchForm } from './SearchForm';
 import { Slider } from './Slider';
 import { StoriesList } from './StoriesList';
 import { storiesReducer } from './storiesReducer';
@@ -14,7 +14,6 @@ import { getAsyncStories } from './storiesService';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
-import { SearchForm } from './SearchForm';
 
 const App = () => {
 
@@ -117,10 +116,8 @@ const App = () => {
     }
   }
 
-  function handleSearchSubmit(event: FormEvent<HTMLFormElement>): void {
+  function handleSearchSubmit(): void {
     setSearchQuery(searchInput);
-
-    event.preventDefault();
   }
 
   return (
