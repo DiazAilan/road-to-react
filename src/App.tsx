@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
-import { darkTheme, lightTheme, ThemeContext } from './contexts/ThemeContext';
+import { ThemeContext, ThemeContextInterface, THEMES } from './contexts/ThemeContext';
 import { Dropdown } from './Dropdown';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
@@ -12,6 +12,7 @@ import { Slider } from './Slider';
 import { StoriesList } from './StoriesList';
 import { storiesReducer } from './storiesReducer';
 import { getAsyncStories } from './storiesService';
+import { ThemeButtons } from './ThemeButtons';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
@@ -29,7 +30,7 @@ const App = () => {
   const [favoriteMascot, setFavoriteMascot] = useState('');
   const [isChecked, setIsChecked] = useState(false);
   const [users, setUsers] = useState<User[]>(usersMockup);
-  const [theme, setTheme] = useState(lightTheme)
+  const [theme, setTheme] = useState<ThemeContextInterface>(THEMES.Light)
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -127,13 +128,7 @@ const App = () => {
       <ThemeContext.Provider value={theme}>
         <h1>My Road to React</h1>
 
-        <Button onClick={() => setTheme(lightTheme)}>
-          Light
-        </Button>
-
-        <Button onClick={() => setTheme(darkTheme)}>
-          Dark
-        </Button>
+        <ThemeButtons onChange={setTheme}/>
 
         <SearchForm
           onSubmit={handleSearchSubmit}
