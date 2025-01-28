@@ -1,8 +1,9 @@
 import { DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { FormEvent, ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
+import { darkTheme, ThemeContext } from './contexts/ThemeContext';
 import { Dropdown } from './Dropdown';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
@@ -122,81 +123,83 @@ const App = () => {
 
   return (
     <>
-      <h1>My Road to React</h1>
+      <ThemeContext.Provider value={darkTheme}>
+        <h1>My Road to React</h1>
 
-      <SearchForm
-        onSubmit={handleSearchSubmit}
-        searchInput={searchInput}
-        onInputChange={handleSearchInput}
-      />
+        <SearchForm
+          onSubmit={handleSearchSubmit}
+          searchInput={searchInput}
+          onInputChange={handleSearchInput}
+        />
 
-      <hr/>
+        <hr/>
 
-      {stories.hasError && <p>Something went wrong...</p>}
-      
-      {stories.isLoading
-        ? <Loader/>
-        : <StoriesList stories={stories.data} onDeleteStory={handleDeleteStory}/>
-      }
+        {stories.hasError && <p>Something went wrong...</p>}
 
-      <Button onClick={handleButtonClick}>
-        {isButtonActive ? 'Try again!' : 'Toggle me!'}
-      </Button>
+        {stories.isLoading
+          ? <Loader/>
+          : <StoriesList stories={stories.data} onDeleteStory={handleDeleteStory}/>
+        }
 
-      <hr/>
+        <Button onClick={handleButtonClick}>
+          {isButtonActive ? 'Try again!' : 'Toggle me!'}
+        </Button>
 
-      <RadioButton value={favoriteMascot === 'cat'} onToggle={() => handleMascotChange('cat')}>
-        Cat
-      </RadioButton>
+        <hr/>
 
-      <RadioButton value={favoriteMascot === 'dog'} onToggle={() => handleMascotChange('dog')}>
-        Dog
-      </RadioButton>
+        <RadioButton value={favoriteMascot === 'cat'} onToggle={() => handleMascotChange('cat')}>
+          Cat
+        </RadioButton>
 
-      <RadioButton value={favoriteMascot === 'tortoise'} onToggle={() => handleMascotChange('tortoise')}>
-        Tortoise
-      </RadioButton>
+        <RadioButton value={favoriteMascot === 'dog'} onToggle={() => handleMascotChange('dog')}>
+          Dog
+        </RadioButton>
 
-      {favoriteMascot ? <p>Favorite Mascot: {favoriteMascot}</p> : null}
+        <RadioButton value={favoriteMascot === 'tortoise'} onToggle={() => handleMascotChange('tortoise')}>
+          Tortoise
+        </RadioButton>
 
-      <hr/>
-      
-      <Checkbox value={isChecked} onChange={handleCheckbox}>
-        I'm checked? {String(isChecked)}
-      </Checkbox>
+        {favoriteMascot ? <p>Favorite Mascot: {favoriteMascot}</p> : null}
 
-      <hr/>
+        <hr/>
 
-      <Dropdown
-        onClickItem={handleDropdownElementSelection}
-        triggerLabel='Dropdown'
-        menu={[
-          <button>Menu 1</button>,
-          <button>Menu 2</button>
-        ]}
-      />
+        <Checkbox value={isChecked} onChange={handleCheckbox}>
+          I'm checked? {String(isChecked)}
+        </Checkbox>
 
-      <hr/>
+        <hr/>
 
-      <UserList
-        users={users}
-        onDragEnd={handleDragUser}
-        dragItemStyle={{background: 'lightblue', borderRadius: '16px'}}
-      />
+        <Dropdown
+          onClickItem={handleDropdownElementSelection}
+          triggerLabel='Dropdown'
+          menu={[
+            <button>Menu 1</button>,
+            <button>Menu 2</button>
+          ]}
+        />
 
-      <hr/>
+        <hr/>
 
-      <Canvas printRef={printRef} onDownloadImage={handleDownloadImage}/>
+        <UserList
+          users={users}
+          onDragEnd={handleDragUser}
+          dragItemStyle={{background: 'lightblue', borderRadius: '16px'}}
+        />
 
-      <hr/>
+        <hr/>
 
-      <Slider initial={10} max={25} onChange={value => console.log(value)}/>
+        <Canvas printRef={printRef} onDownloadImage={handleDownloadImage}/>
 
-      <hr/>
+        <hr/>
 
-      <div style={{ overflow: 'auto', height: '100px' }} ref={overflowRef}>
-        <div style={{ height: '200px' }}>Overflow debugger</div>
-      </div>
+        <Slider initial={10} max={25} onChange={value => console.log(value)}/>
+
+        <hr/>
+
+        <div style={{ overflow: 'auto', height: '100px' }} ref={overflowRef}>
+          <div style={{ height: '200px' }}>Overflow debugger</div>
+        </div>
+      </ThemeContext.Provider>
     </>
   )
 }
