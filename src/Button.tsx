@@ -1,5 +1,5 @@
-import { MouseEventHandler, ReactNode, useContext } from "react"
-import { ThemeContext } from "./contexts/ThemeContext"
+import { MouseEventHandler, ReactNode } from "react"
+import { useTheme } from "./contexts/ThemeContext"
 
 interface ButtonProps {
   type?: 'button' | 'reset' | 'submit'
@@ -9,10 +9,10 @@ interface ButtonProps {
 }
 
 export const Button = ({type = 'button', onClick, children, ...rest}: ButtonProps) => {
-  const theme = useContext(ThemeContext)
+  const {main, sub} = useTheme()
 
   return (
-    <button style={{cursor: 'pointer', background: theme.main, color: theme.sub}} type={type} onClick={onClick} {...rest}>
+    <button style={{cursor: 'pointer', background: main, color: sub}} type={type} onClick={onClick} {...rest}>
       {children}
     </button>
   )

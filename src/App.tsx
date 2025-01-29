@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
-import { ThemeContext, ThemeContextInterface, THEMES } from './contexts/ThemeContext';
+import { ThemeContextInterface, ThemeProvider, THEMES } from './contexts/ThemeContext';
 import { Dropdown } from './Dropdown';
 import usersMockup from './mockups/users.json';
 import { User } from './models/user';
@@ -125,7 +125,7 @@ const App = () => {
 
   return (
     <>
-      <ThemeContext.Provider value={theme}>
+      <ThemeProvider theme={theme}>
         <h1>My Road to React</h1>
 
         <ThemeButtons onChange={setTheme}/>
@@ -203,7 +203,7 @@ const App = () => {
         <div style={{ overflow: 'auto', height: '100px' }} ref={overflowRef}>
           <div style={{ height: '200px' }}>Overflow debugger</div>
         </div>
-      </ThemeContext.Provider>
+      </ThemeProvider>
     </>
   )
 }
