@@ -2,15 +2,40 @@ import { ChangeEvent, FormEvent } from "react";
 import { Todo } from "./models/todos";
 import { Button } from "./Button";
 
+export const todoFilterReducer = (_, action: {type: string}) => {
+  switch (action.type) {
+    case 'SHOW_ALL':
+      return 'ALL';
+    case 'SHOW_COMPLETE':
+      return 'COMPLETE';
+    case 'SHOW_INCOMPLETE':
+      return 'INCOMPLETE';
+    default:
+      throw new Error();
+  }
+};
+
 interface TodosListProps {
   todos: Todo[];
   task: string;
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
   handleChangeInput: (event: ChangeEvent<HTMLInputElement>) => void;
   toggleComplete: (id: string) => void;
+  onShowAllTodos: () => void;
+  onShowCompleteTodos: () => void;
+  onShowIncompleteTodos: () => void;
 }
 
-const TodosList = ({ todos = [], task, handleSubmit, handleChangeInput, toggleComplete }: TodosListProps) => {
+const TodosList = ({
+  todos = [],
+  task,
+  handleSubmit,
+  handleChangeInput,
+  toggleComplete,
+  onShowAllTodos,
+  onShowCompleteTodos,
+  onShowIncompleteTodos
+}: TodosListProps) => {
 
   function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
@@ -19,6 +44,19 @@ const TodosList = ({ todos = [], task, handleSubmit, handleChangeInput, toggleCo
 
   return (
     <div>
+
+      <div>
+        <Button onClick={onShowAllTodos}>
+          Show All
+        </Button>
+        <Button onClick={onShowCompleteTodos}>
+          Show Complete
+        </Button>
+        <Button onClick={onShowIncompleteTodos}>
+          Show Incomplete
+        </Button>
+      </div>
+
       <ul>
         {todos.map(todo => (
           <li key={todo.id}>

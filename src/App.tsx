@@ -17,7 +17,7 @@ import { ThemeButtons } from './ThemeButtons';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
-import TodosList from './Todos';
+import TodosList, { todoFilterReducer } from './Todos';
 import { Todo } from './models/todos';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -38,6 +38,8 @@ const App = () => {
 
   const [todos, setTodos] = useState<Todo[]>(todosMockup);
   const [newTask, setNewTask] = useState<string>();
+
+  const [todoFilter, dispatchTodoFilter] = useReducer(todoFilterReducer, 'ALL');
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -148,19 +150,49 @@ const App = () => {
     setTodos(todos.map(todo => todo.id === id ? {...todo, complete: !todo.complete} : todo))
   }
 
+  function handleShowAllTodos(): void {
+    dispatchTodoFilter({ type: 'SHOW_ALL' });
+  }
+
+  function handleShowCompleteTodos(): void {
+    dispatchTodoFilter({ type: 'SHOW_COMPLETE' });
+  }
+
+  function handleShowIncompleteTodos(): void {
+    dispatchTodoFilter({ type: 'SHOW_INCOMPLETE' });
+  }
+
+  const filteredTodos = todos.filter(todo => {
+    switch (todoFilter) {
+      case 'ALL':
+        return true;
+      case 'COMPLETE':
+        return todo.complete;
+      case 'INCOMPLETE':
+        return !todo.complete;
+      default:
+        return true;
+    }
+  });
+
   return (
     <>
       <ThemeProvider theme={theme}>
         <h1>My Road to React</h1>
 
         <ThemeButtons onChange={setTheme}/>
+        
+        <hr/>
 
         <TodosList
-          todos={todos}
+          todos={filteredTodos}
           task={newTask || ''}
           toggleComplete={toggleTodoComplete}
           handleSubmit={handleNewTaskSubmit}
           handleChangeInput={handleNewTaskInput}
+          onShowAllTodos={handleShowAllTodos}
+          onShowCompleteTodos={handleShowCompleteTodos}
+          onShowIncompleteTodos={handleShowIncompleteTodos}
         />
 
         <hr/>
