@@ -6,6 +6,7 @@ import { Button } from './Button';
 import { ThemeContextInterface, ThemeProvider, THEMES } from './contexts/ThemeContext';
 import { Dropdown } from './Dropdown';
 import usersMockup from './mockups/users.json';
+import todosMockup from './mockups/todos.json';
 import { User } from './models/user';
 import { SearchForm } from './SearchForm';
 import { Slider } from './Slider';
@@ -16,6 +17,9 @@ import { ThemeButtons } from './ThemeButtons';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
+import TodosList from './Todos';
+import { Todo } from './models/todos';
+import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
 
@@ -31,6 +35,9 @@ const App = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [users, setUsers] = useState<User[]>(usersMockup);
   const [theme, setTheme] = useState<ThemeContextInterface>(THEMES.Light)
+
+  const [todos, setTodos] = useState<Todo[]>(todosMockup);
+  const [newTask, setNewTask] = useState<string>();
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -122,6 +129,24 @@ const App = () => {
   function handleSearchSubmit(): void {
     setSearchQuery(searchInput);
   }
+  function handleNewTaskSubmit(): void {
+    if (newTask) {
+      setTodos([...todos, {
+        id: uuidv4(),
+        task: newTask,
+        complete: false
+      }]);
+      setNewTask('');
+    }
+  }
+
+  function handleNewTaskInput(event: React.ChangeEvent<HTMLInputElement>): void {
+    setNewTask(event.target.value);
+  }
+
+  function toggleTodoComplete(id: string): void {
+    setTodos(todos.map(todo => todo.id === id ? {...todo, complete: !todo.complete} : todo))
+  }
 
   return (
     <>
@@ -129,6 +154,16 @@ const App = () => {
         <h1>My Road to React</h1>
 
         <ThemeButtons onChange={setTheme}/>
+
+        <TodosList
+          todos={todos}
+          task={newTask || ''}
+          toggleComplete={toggleTodoComplete}
+          handleSubmit={handleNewTaskSubmit}
+          handleChangeInput={handleNewTaskInput}
+        />
+
+        <hr/>
 
         <SearchForm
           onSubmit={handleSearchSubmit}
