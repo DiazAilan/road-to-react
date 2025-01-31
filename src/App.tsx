@@ -17,9 +17,10 @@ import { ThemeButtons } from './ThemeButtons';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
-import TodosList, { todoFilterReducer } from './Todos';
 import { Todo } from './models/todos';
 import { v4 as uuidv4 } from 'uuid';
+import { todoFilterReducer, todoReducer } from './todoReducers';
+import TodosList from './Todos';
 
 const App = () => {
 
@@ -36,9 +37,9 @@ const App = () => {
   const [users, setUsers] = useState<User[]>(usersMockup);
   const [theme, setTheme] = useState<ThemeContextInterface>(THEMES.Light)
 
-  const [todos, setTodos] = useState<Todo[]>(todosMockup);
   const [newTask, setNewTask] = useState<string>();
 
+  const [todos, dispatchTodos] = useReducer(todoReducer, todosMockup);
   const [todoFilter, dispatchTodoFilter] = useReducer(todoFilterReducer, 'ALL');
 
   const printRef = useRef<HTMLDivElement>(null);
@@ -131,23 +132,26 @@ const App = () => {
   function handleSearchSubmit(): void {
     setSearchQuery(searchInput);
   }
-  function handleNewTaskSubmit(): void {
-    if (newTask) {
-      setTodos([...todos, {
+  function handleNewTaskSubmit(task: string): void {
+    if (task) {
+      dispatchTodos({
+        type: 'ADD_TODO',
+        task,
         id: uuidv4(),
-        task: newTask,
-        complete: false
-      }]);
-      setNewTask('');
+      });
     }
+    setNewTask('');
   }
 
   function handleNewTaskInput(event: React.ChangeEvent<HTMLInputElement>): void {
     setNewTask(event.target.value);
   }
 
-  function toggleTodoComplete(id: string): void {
-    setTodos(todos.map(todo => todo.id === id ? {...todo, complete: !todo.complete} : todo))
+  function toggleTodoComplete(todo: Todo): void {
+    dispatchTodos({
+      type: todo.complete ? 'UNDO_TODO' : 'DO_TODO',
+      id: todo.id,
+    });
   }
 
   function handleShowAllTodos(): void {

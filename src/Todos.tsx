@@ -2,25 +2,12 @@ import { ChangeEvent, FormEvent } from "react";
 import { Todo } from "./models/todos";
 import { Button } from "./Button";
 
-export const todoFilterReducer = (_, action: {type: string}) => {
-  switch (action.type) {
-    case 'SHOW_ALL':
-      return 'ALL';
-    case 'SHOW_COMPLETE':
-      return 'COMPLETE';
-    case 'SHOW_INCOMPLETE':
-      return 'INCOMPLETE';
-    default:
-      throw new Error();
-  }
-};
-
 interface TodosListProps {
   todos: Todo[];
   task: string;
-  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (task: string) => void;
   handleChangeInput: (event: ChangeEvent<HTMLInputElement>) => void;
-  toggleComplete: (id: string) => void;
+  toggleComplete: (todo: Todo) => void;
   onShowAllTodos: () => void;
   onShowCompleteTodos: () => void;
   onShowIncompleteTodos: () => void;
@@ -39,7 +26,7 @@ const TodosList = ({
 
   function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    handleSubmit(event);
+    handleSubmit(task);
   }
 
   return (
@@ -64,7 +51,7 @@ const TodosList = ({
               <input
                   type="checkbox"
                   checked={todo.complete}
-                  onChange={() => toggleComplete(todo.id)}
+                  onChange={() => toggleComplete(todo)}
               />
               {todo.task}
             </label>
