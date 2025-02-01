@@ -1,6 +1,6 @@
 import { DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { createContext, ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
 import { ThemeContextInterface, ThemeProvider, THEMES } from './contexts/ThemeContext';
@@ -41,6 +41,8 @@ const App = () => {
 
   const [todos, dispatchTodos] = useReducer(todoReducer, todosMockup);
   const [todoFilter, dispatchTodoFilter] = useReducer(todoFilterReducer, 'ALL');
+
+  const TodoContext = createContext(null);
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -188,16 +190,18 @@ const App = () => {
         
         <hr/>
 
-        <TodosList
-          todos={filteredTodos}
-          task={newTask || ''}
-          toggleComplete={toggleTodoComplete}
-          handleSubmit={handleNewTaskSubmit}
-          handleChangeInput={handleNewTaskInput}
-          onShowAllTodos={handleShowAllTodos}
-          onShowCompleteTodos={handleShowCompleteTodos}
-          onShowIncompleteTodos={handleShowIncompleteTodos}
-        />
+        <TodoContext.Provider value={dispatchTodos}>
+          <TodosList
+            todos={filteredTodos}
+            task={newTask || ''}
+            toggleComplete={toggleTodoComplete}
+            handleSubmit={handleNewTaskSubmit}
+            handleChangeInput={handleNewTaskInput}
+            onShowAllTodos={handleShowAllTodos}
+            onShowCompleteTodos={handleShowCompleteTodos}
+            onShowIncompleteTodos={handleShowIncompleteTodos}
+          />
+        </TodoContext.Provider>
 
         <hr/>
 
