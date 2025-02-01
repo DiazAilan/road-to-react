@@ -1,7 +1,7 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "./Button";
-import { TodoContext } from "./contexts/TodosContext";
+import { useTodos } from "./contexts/TodosContext";
 import { Todo } from "./models/todos";
 
 interface TodosListProps {
@@ -79,7 +79,7 @@ const TodoItem = ({ todo, onToggle }: TodoItemProps) => (
 
 const AddTodo = () => {
 
-  const dispatch = useContext(TodoContext);
+  const dispatch = useTodos();
   const [task, setTask] = useState('');
   
   function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {

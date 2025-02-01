@@ -1,7 +1,7 @@
-import { createContext, Dispatch, ReactNode } from "react";
+import { createContext, Dispatch, ReactNode, useContext } from "react";
 import { TodoActionType } from "../todoReducers";
 
-export const TodoContext = createContext<Dispatch<TodoActionType> | null>(null);
+const TodoContext = createContext<Dispatch<TodoActionType> | null>(null);
 
 interface TodoProviderProps {
   dispatchTodos: Dispatch<TodoActionType>;
@@ -15,3 +15,7 @@ export const TodoProvider = ({ dispatchTodos, children }: TodoProviderProps) => 
     </TodoContext.Provider>
   );
 };
+
+export function useTodos(): Dispatch<TodoActionType> | null {
+  return useContext(TodoContext);
+}
