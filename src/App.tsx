@@ -21,6 +21,7 @@ import { Todo } from './models/todos';
 import { v4 as uuidv4 } from 'uuid';
 import { todoFilterReducer, todoReducer } from './todoReducers';
 import TodosList from './Todos';
+import { TodoContext } from './contexts/TodosContext';
 
 const App = () => {
 
@@ -41,9 +42,7 @@ const App = () => {
 
   const [todos, dispatchTodos] = useReducer(todoReducer, todosMockup);
   const [todoFilter, dispatchTodoFilter] = useReducer(todoFilterReducer, 'ALL');
-
-  const TodoContext = createContext(null);
-
+  
   const printRef = useRef<HTMLDivElement>(null);
 
   const overflowRef = useRef<HTMLDivElement>(null);
@@ -193,10 +192,7 @@ const App = () => {
         <TodoContext.Provider value={dispatchTodos}>
           <TodosList
             todos={filteredTodos}
-            task={newTask || ''}
             toggleComplete={toggleTodoComplete}
-            handleSubmit={handleNewTaskSubmit}
-            handleChangeInput={handleNewTaskInput}
             onShowAllTodos={handleShowAllTodos}
             onShowCompleteTodos={handleShowCompleteTodos}
             onShowIncompleteTodos={handleShowIncompleteTodos}

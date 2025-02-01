@@ -1,12 +1,11 @@
-import { ChangeEvent, FormEvent } from "react";
-import { Todo } from "./models/todos";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import { Button } from "./Button";
+import { TodoContext } from "./contexts/TodosContext";
+import { Todo } from "./models/todos";
 
 interface TodosListProps {
   todos: Todo[];
-  task: string;
-  handleSubmit: (task: string) => void;
-  handleChangeInput: (event: ChangeEvent<HTMLInputElement>) => void;
   toggleComplete: (todo: Todo) => void;
   onShowAllTodos: () => void;
   onShowCompleteTodos: () => void;
@@ -15,9 +14,6 @@ interface TodosListProps {
 
 const TodosList = ({
   todos = [],
-  task = '',
-  handleSubmit,
-  handleChangeInput,
   toggleComplete,
   onShowAllTodos,
   onShowCompleteTodos,
@@ -26,7 +22,6 @@ const TodosList = ({
 
   return (
     <div>
-
       <TodosFilters
         onShowAllTodos={onShowAllTodos}
         onShowCompleteTodos={onShowCompleteTodos}
@@ -39,11 +34,7 @@ const TodosList = ({
         ))}
       </ul>
 
-      <AddTodo
-        handleSubmit={handleSubmit}
-        task={task}
-        handleChangeInput={handleChangeInput}
-      />
+      <AddTodo/>
     </div>
   );
 }
@@ -86,16 +77,21 @@ const TodoItem = ({ todo, onToggle }: TodoItemProps) => (
   </li>
 );
 
-interface AddTodoProps {
-  handleSubmit: (task: string) => void;
-  task: string;
-  handleChangeInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
+const AddTodo = () => {
 
-const AddTodo = ({ handleSubmit, task, handleChangeInput }: AddTodoProps) => {
+  const dispatch = useContext(TodoContext);
+  const [task, setTask] = useState('');
+  
   function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {
+    if (task) {
+      dispatch({ type: 'ADD_TODO', task, id: uuidv4() });
+    }
+    setTask('');
     event.preventDefault();
-    handleSubmit(task);
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setTask(event.target.value);
   }
   
   return (
@@ -103,7 +99,7 @@ const AddTodo = ({ handleSubmit, task, handleChangeInput }: AddTodoProps) => {
       <input
         type="text"
         value={task}
-        onChange={handleChangeInput}
+        onChange={handleChange}
       />
       <Button type="submit" disabled={!task}>Add Todo</Button>
     </form>
