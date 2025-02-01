@@ -14,13 +14,13 @@ import { SearchForm } from './SearchForm';
 import { Slider } from './Slider';
 import { StoriesList } from './StoriesList';
 import { storiesReducer } from './storiesReducer';
-import { getAsyncStories } from './storiesService';
 import { ThemeButtons } from './ThemeButtons';
 import { todoFilterReducer, todoReducer } from './todoReducers';
 import TodosList from './Todos';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
+import { getAsyncStories } from './StoriesService';
 
 const App = () => {
 
@@ -172,7 +172,7 @@ const App = () => {
         
         <hr/>
 
-        <TodoProvider todos={todos}>
+        <TodoProvider dispatchTodos={dispatchTodos}>
           <TodosList
             todos={filteredTodos}
             toggleComplete={toggleTodoComplete}

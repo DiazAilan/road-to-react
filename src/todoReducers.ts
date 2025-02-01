@@ -29,7 +29,7 @@ type AddTodoAction = {
   id: string;
 };
 
-type TodoActionType = DoTodoAction | UndoTodoAction | AddTodoAction;
+export type TodoActionType = DoTodoAction | UndoTodoAction | AddTodoAction;
 
 export const todoReducer = (state: Todo[], action: TodoActionType) => {
   switch (action.type) {

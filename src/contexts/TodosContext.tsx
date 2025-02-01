@@ -1,21 +1,17 @@
-import { createContext, ReactNode, useContext } from "react";
-import { Todo } from "../models/todos";
+import { createContext, Dispatch, ReactNode } from "react";
+import { TodoActionType } from "../todoReducers";
 
-const TodoContext = createContext<Todo[] | null>(null);
+export const TodoContext = createContext<Dispatch<TodoActionType> | null>(null);
 
 interface TodoProviderProps {
-  todos: Todo[];
+  dispatchTodos: Dispatch<TodoActionType>;
   children: ReactNode;
 }
 
-export const TodoProvider = ({ todos, children }: TodoProviderProps) => {
+export const TodoProvider = ({ dispatchTodos, children }: TodoProviderProps) => {
   return (
-    <TodoContext.Provider value={todos}>
+    <TodoContext.Provider value={dispatchTodos}>
       {children}
     </TodoContext.Provider>
   );
 };
-
-export function useTodos(): Todo[] | null {
-  return useContext(TodoContext);
-}

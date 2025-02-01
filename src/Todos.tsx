@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "./Button";
 import { TodoContext } from "./contexts/TodosContext";
@@ -83,7 +83,7 @@ const AddTodo = () => {
   const [task, setTask] = useState('');
   
   function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {
-    if (task) {
+    if (task && dispatch) {
       dispatch({ type: 'ADD_TODO', task, id: uuidv4() });
     }
     setTask('');
