@@ -1,12 +1,14 @@
 import { DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { createContext, ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
 import { ThemeContextInterface, ThemeProvider, THEMES } from './contexts/ThemeContext';
+import { TodoProvider } from './contexts/TodosContext';
 import { Dropdown } from './Dropdown';
-import usersMockup from './mockups/users.json';
 import todosMockup from './mockups/todos.json';
+import usersMockup from './mockups/users.json';
+import { Todo } from './models/todos';
 import { User } from './models/user';
 import { SearchForm } from './SearchForm';
 import { Slider } from './Slider';
@@ -14,14 +16,11 @@ import { StoriesList } from './StoriesList';
 import { storiesReducer } from './storiesReducer';
 import { getAsyncStories } from './storiesService';
 import { ThemeButtons } from './ThemeButtons';
+import { todoFilterReducer, todoReducer } from './todoReducers';
+import TodosList from './Todos';
 import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
-import { Todo } from './models/todos';
-import { v4 as uuidv4 } from 'uuid';
-import { todoFilterReducer, todoReducer } from './todoReducers';
-import TodosList from './Todos';
-import { TodoContext } from './contexts/TodosContext';
 
 const App = () => {
 
@@ -37,8 +36,6 @@ const App = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [users, setUsers] = useState<User[]>(usersMockup);
   const [theme, setTheme] = useState<ThemeContextInterface>(THEMES.Light)
-
-  const [newTask, setNewTask] = useState<string>();
 
   const [todos, dispatchTodos] = useReducer(todoReducer, todosMockup);
   const [todoFilter, dispatchTodoFilter] = useReducer(todoFilterReducer, 'ALL');
@@ -133,20 +130,6 @@ const App = () => {
   function handleSearchSubmit(): void {
     setSearchQuery(searchInput);
   }
-  function handleNewTaskSubmit(task: string): void {
-    if (task) {
-      dispatchTodos({
-        type: 'ADD_TODO',
-        task,
-        id: uuidv4(),
-      });
-    }
-    setNewTask('');
-  }
-
-  function handleNewTaskInput(event: React.ChangeEvent<HTMLInputElement>): void {
-    setNewTask(event.target.value);
-  }
 
   function toggleTodoComplete(todo: Todo): void {
     dispatchTodos({
@@ -189,7 +172,7 @@ const App = () => {
         
         <hr/>
 
-        <TodoContext.Provider value={dispatchTodos}>
+        <TodoProvider todos={todos}>
           <TodosList
             todos={filteredTodos}
             toggleComplete={toggleTodoComplete}
@@ -197,7 +180,7 @@ const App = () => {
             onShowCompleteTodos={handleShowCompleteTodos}
             onShowIncompleteTodos={handleShowIncompleteTodos}
           />
-        </TodoContext.Provider>
+        </TodoProvider>
 
         <hr/>
 

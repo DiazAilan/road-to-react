@@ -1,4 +1,4 @@
-import { Context, createContext, useContext } from "react";
+import { Context, createContext, ReactNode, useContext } from "react";
 
 export interface ThemeContextInterface {
   main?: string,
@@ -32,7 +32,7 @@ export function useTheme(): ThemeContextInterface {
 
 interface ThemeProviderProps {
   theme: ThemeContextInterface;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const ThemeProvider = ({theme, children}: ThemeProviderProps) => {
