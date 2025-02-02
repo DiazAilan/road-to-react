@@ -56,7 +56,7 @@ const App = () => {
     
   }, [searchQuery])
 
-  useEffect(() => {console.log('DEBUGGER'); handleFetchStories()}, [handleFetchStories]);
+  useEffect(() => {handleFetchStories()}, [handleFetchStories]);
 
   function handleSearchInput(query: string): void {
     setSearchInput(query);
@@ -243,7 +243,7 @@ const App = () => {
         <hr/>
 
         <Slider initial={10} max={25} onChange={value => console.log(value)}/>
-          
+
       </ThemeProvider>
     </>
   )
