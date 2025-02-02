@@ -14,13 +14,12 @@ import { SearchForm } from './SearchForm';
 import { Slider } from './Slider';
 import { StoriesList } from './StoriesList';
 import { storiesReducer } from './storiesReducer';
+import { getAsyncStories } from './StoriesService';
 import { ThemeButtons } from './ThemeButtons';
 import { todoFilterReducer, todoReducer } from './todoReducers';
 import TodosList from './Todos';
-import { useIsOverflow } from './useIsOverflow';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
-import { getAsyncStories } from './StoriesService';
 
 const App = () => {
 
@@ -42,13 +41,6 @@ const App = () => {
   
   const printRef = useRef<HTMLDivElement>(null);
 
-  const overflowRef = useRef<HTMLDivElement>(null);
-  const isOverflow = useIsOverflow(overflowRef, (isOverflowFromCallback) => {
-    console.log(isOverflowFromCallback);
-  });
-
-  console.log(isOverflow)
-
   const handleFetchStories = useCallback(async () => {
     dispatchStories({type: 'STORIES_FETCH_INIT'})
 
@@ -64,7 +56,7 @@ const App = () => {
     
   }, [searchQuery])
 
-  useEffect(() => {handleFetchStories()}, [handleFetchStories]);
+  useEffect(() => {console.log('DEBUGGER'); handleFetchStories()}, [handleFetchStories]);
 
   function handleSearchInput(query: string): void {
     setSearchInput(query);
@@ -251,12 +243,7 @@ const App = () => {
         <hr/>
 
         <Slider initial={10} max={25} onChange={value => console.log(value)}/>
-
-        <hr/>
-
-        <div style={{ overflow: 'auto', height: '100px' }} ref={overflowRef}>
-          <div style={{ height: '200px' }}>Overflow debugger</div>
-        </div>
+          
       </ThemeProvider>
     </>
   )
