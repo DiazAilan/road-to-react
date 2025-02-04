@@ -18,26 +18,23 @@ const TodosList = ({
   onShowAllTodos,
   onShowCompleteTodos,
   onShowIncompleteTodos
-}: TodosListProps) => {
+}: TodosListProps) => (
+  <div>
+    <TodosFilters
+      onShowAllTodos={onShowAllTodos}
+      onShowCompleteTodos={onShowCompleteTodos}
+      onShowIncompleteTodos={onShowIncompleteTodos}
+    />
 
-  return (
-    <div>
-      <TodosFilters
-        onShowAllTodos={onShowAllTodos}
-        onShowCompleteTodos={onShowCompleteTodos}
-        onShowIncompleteTodos={onShowIncompleteTodos}
-      />
+    <ul>
+      {todos.map(todo => (
+        <TodoItem key={todo.id} todo={todo} onToggle={toggleComplete} />
+      ))}
+    </ul>
 
-      <ul>
-        {todos.map(todo => (
-          <TodoItem key={todo.id} todo={todo} onToggle={toggleComplete} />
-        ))}
-      </ul>
-
-      <AddTodo/>
-    </div>
-  );
-}
+    <AddTodo/>
+  </div>
+)
 
 interface TodoFiltersProps {
   onShowAllTodos: () => void;
