@@ -62,12 +62,12 @@ const App = () => {
     setSearchInput(query);
   }
 
-  function handleDeleteStory(id: number): void {
+  const handleDeleteStory = useCallback((id: number) => {
     dispatchStories({
       type: 'REMOVE_STORY',
       payload: {id},
     })
-  }
+  }, [])
 
   function handleButtonClick(): void {
     setIsButtonActive(!isButtonActive);

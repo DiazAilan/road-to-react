@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Button } from './Button';
 import { Story } from './models/story';
 
@@ -6,11 +7,11 @@ export interface StoriesListProps {
   onDeleteStory: (id: number) => void
 }
 
-export const StoriesList = ({stories, onDeleteStory}: StoriesListProps) => (
+export const StoriesList = memo(({stories, onDeleteStory}: StoriesListProps) => (
   <ul>
     {stories.map((story) => <StoryItem story={story} onDelete={onDeleteStory} key={story.objectID}/>)}
   </ul> 
-)
+))
 
 interface StoryItemProps {
   story: Story;
