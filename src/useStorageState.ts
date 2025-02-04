@@ -1,18 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import { useUpdatedEffect } from "./useUpdatedEffect";
 
-export function useStorageState(key: string, initialState: string): [string, Function] {
-  const isMounted = useRef(false);
-  
+export function useStorageState(key: string, initialState: string): [string, Function] {  
   const [value, setValue] = useState(
     localStorage.getItem(key) ?? initialState
   )
 
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-    } else {
-      localStorage.setItem(key, value);
-    }
+  useUpdatedEffect(() => {
+    localStorage.setItem(key, value);
   }, [value, key])
 
   return [value, setValue]
