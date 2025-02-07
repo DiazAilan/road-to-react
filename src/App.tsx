@@ -1,6 +1,6 @@
 import { DropResult } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas';
-import { ReactNode, useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import './App.scss';
 import { Button } from './Button';
 import { ThemeContextInterface, ThemeProvider, THEMES } from './contexts/ThemeContext';
@@ -20,6 +20,7 @@ import { todoFilterReducer, todoReducer } from './todoReducers';
 import TodosList from './Todos';
 import { UserList } from './UsersList';
 import { useStorageState } from './useStorageState';
+import { Story } from './models/story';
 
 const App = () => {
 
@@ -155,6 +156,12 @@ const App = () => {
     }
   });
 
+  const getSumComments = (stories: Story[]) => {
+    return stories.reduce((accumulator, story) => accumulator + story.num_comments, 0)
+  }
+
+  const sumComments = useMemo(() => getSumComments(stories.data), [stories.data])
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -188,7 +195,12 @@ const App = () => {
 
         {stories.isLoading
           ? <Loader/>
-          : <StoriesList stories={stories.data} onDeleteStory={handleDeleteStory}/>
+          : (
+            <>
+              <h2>We have {sumComments} comments</h2>
+              <StoriesList stories={stories.data} onDeleteStory={handleDeleteStory}/>
+            </>
+            )
         }
 
         <Button onClick={handleButtonClick}>

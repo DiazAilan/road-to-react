@@ -3,6 +3,6 @@ export interface Story {
   title: string;
   url: string;
   author: string;
-  numComments: number;
+  num_comments: number;
   points: number;
 }

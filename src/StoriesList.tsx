@@ -23,7 +23,7 @@ const StoryItem = ({story, onDelete}: StoryItemProps) => (
     <span>
       <a href={story.url}>{story.title} - {story.author}</a>
     </span>
-    <span> | {story.numComments} comments</span>
+    <span> | {story.num_comments} comments</span>
     <span> | {story.points} points</span>
     <Button onClick={() => onDelete(story.objectID)}>Delete</Button>
   </li>
