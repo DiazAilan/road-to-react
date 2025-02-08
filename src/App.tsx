@@ -59,9 +59,9 @@ const App = () => {
 
   useEffect(() => {handleFetchStories()}, [handleFetchStories]);
 
-  function handleSearchInput(query: string): void {
+  const handleSearchInput = useCallback((query: string) => {
     setSearchInput(query);
-  }
+  }, []);
 
   const handleDeleteStory = useCallback((id: number) => {
     dispatchStories({
@@ -120,9 +120,9 @@ const App = () => {
     }
   }
 
-  function handleSearchSubmit(): void {
+  const handleSearchSubmit = useCallback(() => {
     setSearchQuery(searchInput);
-  }
+  }, []);
 
   function toggleTodoComplete(todo: Todo): void {
     dispatchTodos({

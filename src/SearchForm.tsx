@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, memo } from "react";
 import { Button } from "./Button";
 import { InputWithLabel } from "./InputLabel";
 
@@ -8,7 +8,7 @@ interface SearchFormProps {
   onInputChange: (query: string) => void;
 }
 
-export const SearchForm = ({ onSubmit, searchInput, onInputChange }: SearchFormProps) => {
+export const SearchForm = memo(({ onSubmit, searchInput, onInputChange }: SearchFormProps) => {
   
   function submitWithoutEventDefault(event: FormEvent<HTMLFormElement>): void {
     onSubmit(event);
@@ -29,4 +29,4 @@ export const SearchForm = ({ onSubmit, searchInput, onInputChange }: SearchFormP
       <Button type='submit' disabled={!searchInput}>Submit</Button>
     </form>
   )
-}
+})
