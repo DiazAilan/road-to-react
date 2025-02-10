@@ -18,7 +18,7 @@ interface StoryItemProps {
   onDelete: (storyId: number) => void;
 } 
 
-const StoryItem = ({story, onDelete}: StoryItemProps) => (
+export const StoryItem = ({story, onDelete}: StoryItemProps) => (
   <li>
     <span>
       <a href={story.url}>{story.title} - {story.author}</a>
